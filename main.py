@@ -18,14 +18,30 @@ class Movie(ndb.Expando):
 
 
 def get_movie(movie_id):
-    # Check if ndb has the movie
+    # Check if ndb has the movie, and if so return it
     movie = Movie.get_by_id(movie_id)
     if movie is not None:
         return movie
 
     # If not create a model and populate it from the Redbox API
+    movie = Movie()
+    url = "https://api.redbox.com/products/%s?apiKey=%s" % (movie_id, APIKEY)
+    response = fetch(url)
+    movie_root = etree.fromstring(response.content)
+    movie_data = movie_root.iterchildren().next()
+    movie.set(movie_data.attrib)
+
+    attributes = {}
+    for el in movie_data.iterchildren():
+        tag = el.tag.split('}')[1] if '}' in el.tag else el.tag
+        attributes[tag] = el.text
+    movie.set(attributes)
+
     # Then look up Rotten Tomatoes scores
-    pass
+
+    # Save and return movie
+    movie.put()
+    return movie
 
 
 def look_up_movies(zipcode):
