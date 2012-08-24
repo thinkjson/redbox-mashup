@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?><StoreBulkList xmlns="http://api.redbox.com/Stores/v2" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:oapi="http://api.redbox.com/OpenAPI/v1" lastUpdated="2012-08-24T01:52:53"><Store commStatus="Online" storeId="ACE51000-5EC0-44C5-B5A5-733F31846529" storeType="Outdoor">
+    <Location lat="35.65274" long="-97.462559">
+      <Address>1300 E 2nd St</Address>
+      <City>Edmond</City>
+      <State>OK</State>
+      <Zipcode>73034-5319</Zipcode>
+    </Location>
+    <Retailer>McDonald's</Retailer>
+    <Channel>Outdoor</Channel>
+  <DistanceFromSearchLocation>3.5</DistanceFromSearchLocation><DistanceFromSearchLocation>3.5</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="2017D412-B38D-474B-930C-02CFF9608BCA" storeType="Indoor">
+    <Location lat="35.65274" long="-97.462548">
+      <Address>1301 E 2nd St</Address>
+      <City>Edmond</City>
+      <State>OK</State>
+      <Zipcode>73034-5320</Zipcode>
+    </Location>
+    <Label>B</Label>
+    <Retailer>Walmart Neighborhood Markets</Retailer>
+    <Channel>Indoor</Channel>
+  <DistanceFromSearchLocation>3.5</DistanceFromSearchLocation><DistanceFromSearchLocation>3.5</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="53DA2513-4B87-454C-A420-1631EDCA549F" storeType="Outdoor">
+    <Location lat="35.652726" long="-97.461488">
+      <Address>1400 E 2nd St</Address>
+      <City>Edmond</City>
+      <State>OK</State>
+      <Zipcode>73034-5321</Zipcode>
+    </Location>
+    <Label>A</Label>
+    <Retailer>Walgreens</Retailer>
+    <Channel>Outdoor</Channel>
+  <DistanceFromSearchLocation>3.5</DistanceFromSearchLocation><DistanceFromSearchLocation>3.5</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="2A183E96-71D6-4F29-91CF-BAF4C555913D" storeType="Outdoor">
+    <Location lat="35.652726" long="-97.461488">
+      <Address>1400 E 2nd St</Address>
+      <City>Edmond</City>
+      <State>OK</State>
+      <Zipcode>73034-5321</Zipcode>
+    </Location>
+    <Label>B</Label>
+    <Retailer>Walgreens</Retailer>
+    <Channel>Outdoor</Channel>
+  <DistanceFromSearchLocation>3.5</DistanceFromSearchLocation><DistanceFromSearchLocation>3.5</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="7C624C51-93B1-47AC-96C2-46AA5F961DBB" storeType="Indoor">
+    <Location lat="35.644669" long="-97.425251">
+      <Address>1225 W I35 Frontage Rd</Address>
+      <City>Edmond</City>
+      <State>OK</State>
+      <Zipcode>73013-7394</Zipcode>
+    </Location>
+    <Label>A</Label>
+    <Retailer>Walmart Supercenter</Retailer>
+    <Channel>Indoor</Channel>
+  <DistanceFromSearchLocation>3.7</DistanceFromSearchLocation><DistanceFromSearchLocation>3.7</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="8C71CD26-8464-4E28-997A-E02A8B6F406F" storeType="Outdoor">
+    <Location lat="35.644669" long="-97.425251">
+      <Address>1225 W I35 Frontage Rd</Address>
+      <City>Edmond</City>
+      <State>OK</State>
+      <Zipcode>73013-7394</Zipcode>
+    </Location>
+    <Label>B</Label>
+    <Retailer>Walmart Supercenter</Retailer>
+    <Channel>Outdoor</Channel>
+  <DistanceFromSearchLocation>3.7</DistanceFromSearchLocation><DistanceFromSearchLocation>3.7</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="EF7C5E6F-A3AB-4152-AC9A-CD61DB4938E9" storeType="Outdoor">
+    <Location lat="35.66676" long="-97.496099">
+      <Address>1235 N Kelly</Address>
+      <City>Edmond</City>
+      <State>OK</State>
+      <Zipcode>73003-4865</Zipcode>
+    </Location>
+    <Retailer>McDonald's</Retailer>
+    <Channel>Outdoor</Channel>
+  <DistanceFromSearchLocation>4.1</DistanceFromSearchLocation><DistanceFromSearchLocation>4.1</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="10E68F2A-5662-4EE3-84DA-C6463F338D5B" storeType="Outdoor">
+    <Location lat="35.6529" long="-97.487014">
+      <Address>301 W Edmond Rd</Address>
+      <City>Edmond</City>
+      <State>OK</State>
+      <Zipcode>73003-5601</Zipcode>
+    </Location>
+    <Retailer>EZ Mart</Retailer>
+    <Channel>Outdoor</Channel>
+  <DistanceFromSearchLocation>4.3</DistanceFromSearchLocation><DistanceFromSearchLocation>4.3</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="0D5D0C50-E288-4F4E-9AD6-CB001571890E" storeType="Outdoor">
+    <Location lat="35.63776" long="-97.46049">
+      <Address>1520 S Bryant Ave</Address>
+      <City>Edmond</City>
+      <State>OK</State>
+      <Zipcode>73013-6028</Zipcode>
+    </Location>
+    <Retailer>CVS/Pharmacy</Retailer>
+    <Channel>Outdoor</Channel>
+  <DistanceFromSearchLocation>4.4</DistanceFromSearchLocation><DistanceFromSearchLocation>4.4</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="109C26C0-EF12-4F1A-8023-13CD2EC14AD4" storeType="Indoor">
+    <Location lat="35.667548" long="-97.512852">
+      <Address>2200 W Danforth Rd</Address>
+      <City>Edmond</City>
+      <State>OK</State>
+      <Zipcode>73003-4600</Zipcode>
+    </Location>
+    <Retailer>Walmart Supercenter</Retailer>
+    <Channel>Indoor</Channel>
+  <DistanceFromSearchLocation>4.9</DistanceFromSearchLocation><DistanceFromSearchLocation>4.9</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="EB5C30EE-E2B1-48C9-8CED-B5F378C63E0B" storeType="Outdoor">
+    <Location lat="35.6682" long="-97.5143">
+      <Address>1301 N Santa Fe Ave se</Address>
+      <City>Edmond</City>
+      <State>OK</State>
+      <Zipcode>73003-3673</Zipcode>
+    </Location>
+    <Retailer>CVS/Pharmacy</Retailer>
+    <Channel>Outdoor</Channel>
+  <DistanceFromSearchLocation>5.0</DistanceFromSearchLocation><DistanceFromSearchLocation>5.0</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="DC70C465-0D7C-4D58-B0F7-BBEBC5FA9201" storeType="Indoor">
+    <Location lat="35.652927" long="-97.513916">
+      <Address>301 S Santa Fe Ave</Address>
+      <City>Edmond</City>
+      <State>OK</State>
+      <Zipcode>73003-6329</Zipcode>
+    </Location>
+    <Retailer>Walgreens</Retailer>
+    <Channel>Indoor</Channel>
+  <DistanceFromSearchLocation>5.5</DistanceFromSearchLocation><DistanceFromSearchLocation>5.5</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="C4C309F2-5B2E-4277-94D8-61CD21EEFC47" storeType="Outdoor">
+    <Location lat="35.623446" long="-97.478974">
+      <Address>185 E 33rd St</Address>
+      <City>Edmond</City>
+      <State>OK</State>
+      <Zipcode>73013-4602</Zipcode>
+    </Location>
+    <Label>A</Label>
+    <Retailer>Walgreens</Retailer>
+    <Channel>Outdoor</Channel>
+  <DistanceFromSearchLocation>5.7</DistanceFromSearchLocation><DistanceFromSearchLocation>5.7</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="27675E7A-6DC7-443F-AFC4-815BC27110E1" storeType="Outdoor">
+    <Location lat="35.623446" long="-97.478974">
+      <Address>185 E 33rd St</Address>
+      <City>Edmond</City>
+      <State>OK</State>
+      <Zipcode>73013-4602</Zipcode>
+    </Location>
+    <Label>B</Label>
+    <Retailer>Walgreens</Retailer>
+    <Channel>Outdoor</Channel>
+  <DistanceFromSearchLocation>5.7</DistanceFromSearchLocation><DistanceFromSearchLocation>5.7</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="E6DE88C1-88E7-4F2F-8B0B-BE13BB51F95D" storeType="Outdoor">
+    <Location lat="35.63941" long="-97.513825">
+      <Address>1414 S Santa Fe Ave</Address>
+      <City>Edmond</City>
+      <State>OK</State>
+      <Zipcode>73003-5908</Zipcode>
+    </Location>
+    <Retailer>McDonald's</Retailer>
+    <Channel>Outdoor</Channel>
+  <DistanceFromSearchLocation>6.0</DistanceFromSearchLocation><DistanceFromSearchLocation>6.0</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="1B283BD4-1D21-444E-BC7D-7A82083BB761" storeType="Outdoor">
+    <Location lat="35.609123" long="-97.461476">
+      <Address>2933 E Memorial</Address>
+      <City>Edmond</City>
+      <State>OK</State>
+      <Zipcode>73013-6472</Zipcode>
+    </Location>
+    <Retailer>McDonald's</Retailer>
+    <Channel>Outdoor</Channel>
+  <DistanceFromSearchLocation>6.3</DistanceFromSearchLocation><DistanceFromSearchLocation>6.3</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="1C8B1F43-9DC1-458F-84AF-DD6318B1B5C4" storeType="Outdoor">
+    <Location lat="35.6254" long="-97.5137">
+      <Address>3200 S Santa Fe Ave</Address>
+      <City>Edmond</City>
+      <State>OK</State>
+      <Zipcode>73013-2009</Zipcode>
+    </Location>
+    <Retailer>CVS/Pharmacy</Retailer>
+    <Channel>Outdoor</Channel>
+  <DistanceFromSearchLocation>6.7</DistanceFromSearchLocation><DistanceFromSearchLocation>6.7</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="744F6383-8DFA-4473-93A7-5F2C9954E081" storeType="Indoor">
+    <Location lat="35.638473" long="-97.531616">
+      <Address>1101 NW 164th St</Address>
+      <City>Edmond</City>
+      <State>OK</State>
+      <Zipcode>73013-1310</Zipcode>
+    </Location>
+    <Retailer>Walmart Neighborhood Markets</Retailer>
+    <Channel>Indoor</Channel>
+  <DistanceFromSearchLocation>6.9</DistanceFromSearchLocation><DistanceFromSearchLocation>6.9</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="E8FC9D43-9350-4526-A30C-B748F0037F3C" storeType="Indoor">
+    <Location lat="35.593137" long="-97.43561">
+      <Address>12135 N I 35 Service Rd</Address>
+      <City>Oklahoma City</City>
+      <State>OK</State>
+      <Zipcode>73131-6428</Zipcode>
+    </Location>
+    <Retailer>McDonald's</Retailer>
+    <Channel>Indoor</Channel>
+  <DistanceFromSearchLocation>7.2</DistanceFromSearchLocation><DistanceFromSearchLocation>7.2</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="47AB5932-AE5E-468B-97E6-81CF8EC56EE0" storeType="Outdoor">
+    <Location lat="35.62353" long="-97.531189">
+      <Address>15100 N Western Ave</Address>
+      <City>Edmond</City>
+      <State>OK</State>
+      <Zipcode>73013-1108</Zipcode>
+    </Location>
+    <Retailer>Walgreens</Retailer>
+    <Channel>Outdoor</Channel>
+  <DistanceFromSearchLocation>7.5</DistanceFromSearchLocation><DistanceFromSearchLocation>7.5</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="A467818B-4091-41EB-94F3-6B1D7351226A" storeType="Outdoor">
+    <Location lat="35.612555" long="-97.549594">
+      <Address>14001 N Pennsylvania Ave</Address>
+      <City>Oklahoma City</City>
+      <State>OK</State>
+      <Zipcode>73134-6025</Zipcode>
+    </Location>
+    <Retailer>McDonald's</Retailer>
+    <Channel>Outdoor</Channel>
+  <DistanceFromSearchLocation>8.8</DistanceFromSearchLocation><DistanceFromSearchLocation>8.8</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="EBA4EF50-159F-4168-88DB-8472FE379178" storeType="Indoor">
+    <Location lat="35.608501" long="-97.548069">
+      <Address>2000 W Memorial Rd</Address>
+      <City>Oklahoma City</City>
+      <State>OK</State>
+      <Zipcode>73134-6506</Zipcode>
+    </Location>
+    <Retailer>Walmart Supercenter</Retailer>
+    <Channel>Indoor</Channel>
+  <DistanceFromSearchLocation>8.9</DistanceFromSearchLocation><DistanceFromSearchLocation>8.9</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="1D62542D-027D-4CF4-A610-73B050A11DC0" storeType="Outdoor">
+    <Location lat="35.59463" long="-97.549349">
+      <Address>12300 N Pennsylvania Ave</Address>
+      <City>Oklahoma City</City>
+      <State>OK</State>
+      <Zipcode>73120-8423</Zipcode>
+    </Location>
+    <Retailer>Circle K</Retailer>
+    <Channel>Outdoor</Channel>
+  <DistanceFromSearchLocation>9.6</DistanceFromSearchLocation><DistanceFromSearchLocation>9.6</DistanceFromSearchLocation></Store><Store commStatus="Online" storeId="A6E48EEA-59D3-4ED1-918E-A476833370B1" storeType="Outdoor">
+    <Location lat="35.594055" long="-97.549299">
+      <Address>12216 N Pennsylvania</Address>
+      <City>Oklahoma City</City>
+      <State>OK</State>
+      <Zipcode>73120-7834</Zipcode>
+    </Location>
+    <Retailer>McDonald's</Retailer>
+    <Channel>Outdoor</Channel>
+  <DistanceFromSearchLocation>9.7</DistanceFromSearchLocation><DistanceFromSearchLocation>9.7</DistanceFromSearchLocation></Store></StoreBulkList>

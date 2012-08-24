@@ -23,7 +23,7 @@ def look_up_movies(zipcode):
     results = []
     url = "https://api.redbox.com/stores/postalcode/%s?apiKey=%s"\
         % (zipcode, APIKEY)
-    response = fetch(url, headers={"Accept": "application/json"})
+    response = fetch(url)
     kiosks = json.loads(response.content)['Inventory']['StoreInventory']
     for kiosk in kiosks:
         for inventory in kiosk['ProductInventory']:
