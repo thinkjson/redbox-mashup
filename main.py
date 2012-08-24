@@ -1,14 +1,24 @@
 import webapp2
 from google.appengine.ext import deferred
 from google.appengine.api import memcache
+from google.appengine.api.urlfetch import fetch
 from settings import APIKEY
 
 # Get locations near a zip code
 
 
-def look_up_movies(zip):
-    # Do everything necessary to generate top 10 list
-    "https://api.redbox.com/stores/postalcode/73034?apiKey=%s" % APIKEY
+def look_up_movies(zipcode):
+    # Fetch kiosks within 10 miles
+    response = fetch("https://api.redbox.com/stores/postalcode/%d?apiKey=%s" % (zipcode, APIKEY))
+    
+    # Fetch inventory for each kiosk
+    # Look up scores for each title
+    # Sort list by score, then by title, then by distance
+    # Generate a unique list of titles
+    # Truncate at top 10
+    # Persist list to memcache
+
+
     return
 
 
