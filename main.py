@@ -5,7 +5,7 @@ from google.appengine.ext import deferred
 from google.appengine.api import memcache
 from google.appengine.api.urlfetch import fetch
 from settings import APIKEY
-import lxml
+from lxml import etree
 from google.appengine.ext import ndb
 
 jinja_environment = jinja2.Environment(
@@ -19,6 +19,10 @@ class Movie(ndb.Expando):
 
 def get_movie(movie_id):
     # Check if ndb has the movie
+    movie = Movie.get_by_id(movie_id)
+    if movie is not None:
+        return movie
+
     # If not create a model and populate it from the Redbox API
     # Then look up Rotten Tomatoes scores
     pass
@@ -30,12 +34,18 @@ def look_up_movies(zipcode):
     url = "https://api.redbox.com/stores/postalcode/%s?apiKey=%s"\
         % (zipcode, APIKEY)
     response = fetch(url)
-    kiosks = json.loads(response.content)['Inventory']['StoreInventory']
+    kiosks_root = etree.fromstring(response.content)
+    kiosks = kiosks_root.iterchildren()
     for kiosk in kiosks:
-        for inventory in kiosk['ProductInventory']:
-            if inventory['@inventoryStatus'] != "InStock":
+        store_id = kiosk.attrib['storeId']
+        url = "https://api.redbox.com/stores/inventory/%s?apiKey=%s"\
+            % (store_id, APIKEY)
+        response = fetch(url)
+        inventory_root = etree.fromstring(response.content)
+        for inventory in inventory_root.iterchildren().next().iterchildren():
+            if inventory.attrib['inventoryStatus'] != "InStock":
                 continue
-            movie_id = inventory['@productId']
+            movie_id = inventory['productId']
             movie = get_movie(movie_id)
             results.append({
                 "score": movie.score,
@@ -47,6 +57,8 @@ def look_up_movies(zipcode):
     # Sort list by score, then by title, then by distance
     # Generate a unique list of titles
     # Truncate at top 10
+    # Generate reservation links
+    #   http://www.redbox.com/externalcart?titleID={product_id}&StoreGUID={store_id}
     # Persist list to memcache
     return
 
