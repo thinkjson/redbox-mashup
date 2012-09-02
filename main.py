@@ -53,7 +53,8 @@ def download_movies():
         response = fetch(url, headers={'Accept': 'application/json'})
         logging.info("complete!")
         movies = json.loads(response.content)
-        if 'Movie' not in movies['Products']:
+        if 'Movie' not in movies['Products'] or \
+                len(movies['Products']['Movie']) == 0:
             logging.info("Download complete!")
             return
         for obj in movies['Products']['Movie']:
@@ -167,19 +168,11 @@ class MainHandler(webapp2.RequestHandler):
 
 
 class ZIPHandler(webapp2.RequestHandler):
-    def get(self, raw_zipcode):
-        # Check if zipcode is valid
-        zipcode = raw_zipcode
-        if zipcode is None:
-            template_values = {"error": "zip code not valid: %s" % raw_zipcode}
-            template = jinja_environment.get_template('templates/index.html')
-            self.response.out.write(template.render(template_values))
-            return
-
+    def get(self, zipcode):
         #results = memcache.get("movies-%s" % zipcode)
         results = None
         if results is None:
-            results = fetch_inventory(zipcode.group(0))
+            results = fetch_inventory(zipcode)
 
         template_values = {"results": results}
         template = jinja_environment.get_template('templates/zipcode.html')
