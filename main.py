@@ -137,7 +137,7 @@ class MoviesHandler(webapp2.RequestHandler):
             % REDBOX_APIKEY
         response = fetch(url, headers={'Accept': 'application/json'})
         movies = json.loads(response.content)
-        for obj in movies['Products']['Movie'][:50]:
+        for obj in movies['Products']['Movie'][:100]:
             movie_id = obj['@productId']
             if Movie.get_by_id(movie_id) is not None:
                 continue
