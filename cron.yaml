@@ -1,4 +1,4 @@
 cron:
 - description: update movies
   url: /movies/
-  schedule: every 60 minutes
+  schedule: every 12 hours

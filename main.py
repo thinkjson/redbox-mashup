@@ -39,9 +39,64 @@ def fetch(url, **kwargs):
     if response is None:
         api_response = urlfetch.fetch(url, **kwargs)
         response = Response(api_response.status_code, api_response.content)
-        logging.info("Caching response")
         memcache.set(md5(url).hexdigest(), response, time=3600)
     return response
+
+
+def download_movies():
+    page = 0
+    while True:
+        page += 1
+        url = "https://api.redbox.com/v3/products/movies?pageSize=10&pageNum=%s&apiKey=%s"\
+            % (page, REDBOX_APIKEY)
+        logging.info("Fetching products...")
+        response = fetch(url, headers={'Accept': 'application/json'})
+        logging.info("complete!")
+        movies = json.loads(response.content)
+        if 'Movie' not in movies['Products']:
+            logging.info("Download complete!")
+            return
+        for obj in movies['Products']['Movie']:
+            movie_id = obj['@productId']
+            if Movie.get_by_id(movie_id) is not None:
+                continue
+            logging.info("Saving metadata for %s" % obj['Title'])
+            movie = Movie(id=movie_id)
+            properties = {}
+            for key in obj:
+                if type(obj[key]) != dict:
+                    properties[key.lower()] = obj[key]
+            movie.populate(**properties)
+            if type(movie.title) != str and type(movie.title) != unicode:
+                movie.title = unicode(movie.title)
+            movie.put()
+
+            # Then look up Rotten Tomatoes scores
+            url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?q=%s&apikey=%s"\
+                % (urllib.quote(unicodedata.normalize('NFKD', movie.title).encode('ascii', 'ignore')), RT_APIKEY)
+            response = fetch(url)
+            if response.status_code != 200:
+                logging.error("Could not retrieve Rotten Tomatoes information for %s: %s" % (obj['Title'], url))
+                content = '{"movies":{}}'
+            else:
+                content = response.content
+            for result in json.loads(content.strip())['movies']:
+                if not hasattr(movie, 'score') and \
+                        levenshtein(movie.title, unicode(result['title']))/len(movie.title) < 0.2:
+                    # This is where the magic happens
+                    movie.critics_score = result['ratings']['critics_score']
+                    movie.critics_consensus = result['critics_consensus'] if 'critics_consensus' in result else ''
+                    movie.audience_score = result['ratings']['audience_score']
+                    movie.score = int(sum([
+                        result['ratings']['critics_score'],
+                        result['ratings']['critics_score'],
+                        result['ratings']['audience_score']
+                    ])/3)
+            if not hasattr(movie, 'score'):
+                movie.score = 0
+
+            # Save and return movie
+            movie.put()
 
 
 def fetch_inventory(zipcode):
@@ -132,53 +187,8 @@ class ZIPHandler(webapp2.RequestHandler):
 
 class MoviesHandler(webapp2.RequestHandler):
     def get(self):
-        url = "https://api.redbox.com/v3/products/movies?apiKey=%s"\
-            % REDBOX_APIKEY
-        response = fetch(url, headers={'Accept': 'application/json'})
-        movies = json.loads(response.content)
-        for obj in movies['Products']['Movie'][:100]:
-            movie_id = obj['@productId']
-            if Movie.get_by_id(movie_id) is not None:
-                continue
-            logging.info("Saving metadata for %s" % obj['Title'])
-            movie = Movie(id=movie_id)
-            properties = {}
-            for key in obj:
-                if type(obj[key]) != dict:
-                    properties[key.lower()] = obj[key]
-            movie.populate(**properties)
-            if type(movie.title) != str and type(movie.title) != unicode:
-                movie.title = unicode(movie.title)
-            movie.put()
-
-            # Then look up Rotten Tomatoes scores
-            url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?q=%s&apikey=%s"\
-                % (urllib.quote(unicodedata.normalize('NFKD', movie.title).encode('ascii', 'ignore')), RT_APIKEY)
-            response = fetch(url)
-            if response.status_code != 200:
-                logging.error("Could not retrieve Rotten Tomatoes information for %s: %s" % (obj['Title'], url))
-                content = '{"movies":{}}'
-            else:
-                content = response.content
-            for result in json.loads(content.strip())['movies']:
-                if not hasattr(movie, 'score') and \
-                        levenshtein(movie.title, unicode(result['title']))/len(movie.title) < 0.2:
-                    # This is where the magic happens
-                    movie.critics_score = result['ratings']['critics_score']
-                    movie.critics_consensus = result['critics_consensus'] if 'critics_consensus' in result else ''
-                    movie.audience_score = result['ratings']['audience_score']
-                    movie.score = int(sum([
-                        result['ratings']['critics_score'],
-                        result['ratings']['critics_score'],
-                        result['ratings']['audience_score']
-                    ])/3)
-            if not hasattr(movie, 'score'):
-                movie.score = 0
-
-            # Save and return movie
-            movie.put()
-
-        self.response.out.write("Inventory successfully loaded")
+        deferred.defer(download_movies, _target='movies')
+        logging.info("Inventory download queued")
 
 #MovieInfoHandler(webapp2.RequestHandler):
 #    def get(self, movie_id):
