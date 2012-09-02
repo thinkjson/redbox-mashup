@@ -23,17 +23,11 @@
     <body>
 
         <div id="main">
-            <p>Find top rated movies near your zip-code, and reserve them now!</p>
-
-            <form action="" method="get">
-                <p>
-                    <input type="text" id="id_zip" name="zip" class="zip" />
-                </p>
-                <p class="submit">
-                    <button type="submit" class="btn submit">Submit</button>
-                </p>
-            </form>
-
+            <ul id="movies">
+                {% for movie in results %}
+                    <li>{{ movie.mpaarating }}  <a href="{{ movie.reservation_link }}">{{ movie.title }}</a> ({{ movie.score }})</li>
+                {% endfor %}
+            </ul>
         </div>
 
 

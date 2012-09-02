@@ -1,0 +1,4 @@
+cron:
+- description: update movies
+  url: /movies/
+  schedule: every 10 minutes
