@@ -26,6 +26,10 @@
             <ul id="movies">
                 {% for movie in results %}
                     <li>{{ movie.mpaarating }}  <a href="{{ movie.reservation_link }}">{{ movie.title }}</a> ({{ movie.critics_score }}|{{ movie.audience_score }})</li>
+                    <div class="description">
+                        <p>{{ movie.synopsislong }}</p>
+                        <p>{{ movie.critics_consensus }}</p>
+                    </div>
                 {% endfor %}
             </ul>
         </div>
