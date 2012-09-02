@@ -25,7 +25,7 @@
         <div id="main">
             <ul id="movies">
                 {% for movie in results %}
-                    <li>{{ movie.mpaarating }}  <a href="{{ movie.reservation_link }}">{{ movie.title }}</a> ({{ movie.score }})</li>
+                    <li>{{ movie.mpaarating }}  <a href="{{ movie.reservation_link }}">{{ movie.title }}</a> ({{ movie.critics_score }}|{{ movie.audience_score }})</li>
                 {% endfor %}
             </ul>
         </div>

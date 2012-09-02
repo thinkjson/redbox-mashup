@@ -17,6 +17,7 @@ import re
 import copy
 import unicodedata
 from operator import itemgetter
+from hashlib import md5
 
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -27,12 +28,20 @@ class Movie(ndb.Expando):
     _default_indexed = False
 
 
+class Response():
+    def __init__(self, status_code, content):
+        self.status_code = status_code
+        self.content = content
+
+
 # Cache all API calls for an hour
 def fetch(url, **kwargs):
-    response = memcache.get(url)
+    response = memcache.get(md5(url).hexdigest())
     if response is None:
-        response = urlfetch.fetch(url, **kwargs)
-        memcache.set(url, response, time=3600)
+        api_response = urlfetch.fetch(url, **kwargs)
+        response = Response(api_response.status_code, api_response.content)
+        logging.info("Caching response")
+        memcache.set(md5(url).hexdigest(), response, time=3600)
     return response
 
 
