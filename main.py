@@ -21,7 +21,6 @@ from hashlib import md5
 
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
-is_zip = re.compile('\d{5}')
 
 
 class Movie(ndb.Expando):
@@ -97,7 +96,7 @@ def fetch_inventory(zipcode):
         unique_results.append(results_keys[result])
 
     # Sort list by score, truncate list
-    unique_results = sorted(unique_results, key=itemgetter('score'), reverse=True)[:50] 
+    unique_results = sorted(unique_results, key=itemgetter('score'), reverse=True)[:50]
 
     # Persist list to memcache
     # memcache.set("movies-%s" % zipcode, results)
@@ -115,7 +114,7 @@ class MainHandler(webapp2.RequestHandler):
 class ZIPHandler(webapp2.RequestHandler):
     def get(self, raw_zipcode):
         # Check if zipcode is valid
-        zipcode = is_zip.match(raw_zipcode)
+        zipcode = raw_zipcode
         if zipcode is None:
             template_values = {"error": "zip code not valid: %s" % raw_zipcode}
             template = jinja_environment.get_template('templates/index.html')
@@ -187,6 +186,6 @@ class MoviesHandler(webapp2.RequestHandler):
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
-    (r'/(\d+)', ZIPHandler),
+    (r'/(\d{5})', ZIPHandler),
     ('/movies/', MoviesHandler)
 ])
