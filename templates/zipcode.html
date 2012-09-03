@@ -9,27 +9,24 @@
         <link rel="stylesheet" href="css/main.css">
         <script src="js/vendor/modernizr-2.6.1.min.js"></script>
         -->
-
-        <style>
-            input.zip { padding: 10px; font-size: 26px; }
-            button.submit { font-size: 26px; }
-            p.submit { text-align: center; }
-            #main {
-                margin: auto;
-                width: 33%;
-            }
-        </style>
+        <link rel="stylesheet" href="/static/boostrap-custom.css">
+        <link rel="stylesheet" href="/static/style.css">
     </head>
     <body>
 
         <div id="main">
             <ul id="movies">
                 {% for movie in results %}
-                    <li>{{ movie.mpaarating }}  <a href="{{ movie.reservation_link }}">{{ movie.title }}</a> ({{ movie.critics_score }}|{{ movie.audience_score }})</li>
-                    <div class="description">
-                        <p>{{ movie.synopsislong }}</p>
-                        <p>{{ movie.critics_consensus }}</p>
-                    </div>
+                    <li>
+                        <a href="{{ movie.reservation_link }}" class="movie-title" title="Reserve this movie at your local Redbox, now!">{{ movie.title }}</a>
+                        <span class="badge badge-inverse mpaa-rating" title="MPAA Rating">{{ movie.mpaarating }}</span>
+                        <span class="badge badge-inverse critic-score" title="Critic Score">{{ movie.critics_score }}</span>
+                        <span class="badge badge-inverse audience-score" title="Audience Score">{{ movie.audience_score }}</span>
+                        <div class="description">
+                            <p class="synopsis">{{ movie.synopsislong }}</p>
+                            <p class="consensus">{{ movie.critics_consensus }}</p>
+                        </div>
+                    </li>
                 {% endfor %}
             </ul>
         </div>
