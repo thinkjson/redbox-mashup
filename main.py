@@ -133,6 +133,9 @@ def fetch_inventory(zipcode):
             if movie is None:
                 # TODO - queue creation
                 continue
+            if not hasattr(movie, 'score'):
+                movie.key.delete()
+                continue
             distance = float(kiosk\
                 .find('{http://api.redbox.com/Stores/v2}DistanceFromSearchLocation')\
                 .text)
