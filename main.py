@@ -161,6 +161,14 @@ def fetch_inventory(zipcode):
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
+        # If zip code entered, without javascript working,
+        # we'll receive the zip code here. Let's handle that
+        # and redirect to the proper place:
+        zip_code = self.request.GET.get('zip')  # Empty string default in webapp2.
+        if zip_code and re.match(r'^\d{5}$', zip_code):
+            # TODO: Default 302 okay? Otherwise, set 'permanent=True'.
+            # TODO: URL/Route duplication. Need to use named route:
+            return self.redirect('/{zip_code}'.format(zip_code=zip_code))
         template_values = {}
         template = jinja_environment.get_template('templates/index.html')
 
@@ -177,6 +185,7 @@ class ZIPHandler(webapp2.RequestHandler):
         template_values = {"results": results}
         template = jinja_environment.get_template('templates/zipcode.html')
         self.response.out.write(template.render(template_values))
+
 
 class MoviesHandler(webapp2.RequestHandler):
     def get(self):
