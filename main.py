@@ -84,6 +84,10 @@ def download_movies():
                 movie.thumb = obj['BoxArtImages']['link'][2]['@href']
             movie.put()
 
+            # Don't recalc score if it's really bad
+            if hasattr(movie, 'score') and movie.score < 50:
+                continue
+
             # Then look up Rotten Tomatoes scores
             url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?q=%s&apikey=%s"\
                 % (urllib.quote(unicodedata.normalize('NFKD', movie.title).encode('ascii', 'ignore')), RT_APIKEY)
@@ -91,6 +95,8 @@ def download_movies():
             if response.status_code != 200:
                 logging.error("Could not retrieve Rotten Tomatoes information for %s: %s" % (obj['Title'], url))
                 content = '{"movies":{}}'
+                if response.status_code == 403:
+                    return
             else:
                 content = response.content
             for result in json.loads(content.strip())['movies']:
