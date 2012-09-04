@@ -191,8 +191,13 @@ class MainHandler(webapp2.RequestHandler):
 class ZIPHandler(webapp2.RequestHandler):
     def get(self, zipcode):
         results = memcache.get("zipcode-%s" % zipcode)
-        if results is None:
-            results = fetch_inventory(zipcode)
+        if results is None or results == "loading":
+            if results != "loading":
+                memcache.set("zipcode-%s" % zipcode, "loading", time=3600)
+                deferred.defer(fetch_inventory, zipcode)
+            template = jinja_environment.get_template('templates/loading.html')
+            self.response.out.write(template.render({}))
+            return
 
         template_values = {"results": results,
                            "zipcode": zipcode}
