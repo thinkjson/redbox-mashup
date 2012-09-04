@@ -19,6 +19,7 @@ import unicodedata
 from operator import itemgetter
 from hashlib import md5
 from datetime import datetime
+from webapp2_extras.appengine.users import admin_required
 
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -221,6 +222,7 @@ class ZIPHandler(webapp2.RequestHandler):
         self.response.headers['Cache-Control'] = 'public, max-age=3600'
 
 class MoviesHandler(webapp2.RequestHandler):
+    @admin_required
     def get(self):
         deferred.defer(download_movies, _target='movies')
         logging.info("Inventory download queued")
