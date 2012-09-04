@@ -18,6 +18,7 @@ import copy
 import unicodedata
 from operator import itemgetter
 from hashlib import md5
+from datetime import datetime
 
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
@@ -105,6 +106,20 @@ def download_movies():
                     ])/3)
             if not hasattr(movie, 'score'):
                 movie.score = 0
+
+            # Adjust score based on release date
+            try:
+                daysago = (datetime.now() - \
+                    datetime.datetime.strptime(movie.redboxreleasedate, \
+                    "%Y-%m-%d")).days
+            except:
+                daysago = 180
+            if daysago <= 30:
+                movie.score += 5
+            if daysago <= 7:
+                movie.score += 10
+            if daysago > 180:
+                movie.score -= 20
 
             # Save and return movie
             movie.put()
