@@ -168,7 +168,7 @@ def fetch_inventory(zipcode):
     unique_results = sorted(unique_results, key=itemgetter('score'), reverse=True)[:50]
 
     # Persist list to memcache
-    # memcache.set("movies-%s" % zipcode, results)
+    memcache.set("zipcode-%s" % zipcode, unique_results, time=3600)
     return unique_results
 
 
@@ -190,8 +190,7 @@ class MainHandler(webapp2.RequestHandler):
 
 class ZIPHandler(webapp2.RequestHandler):
     def get(self, zipcode):
-        #results = memcache.get("movies-%s" % zipcode)
-        results = None
+        results = memcache.get("zipcode-%s" % zipcode)
         if results is None:
             results = fetch_inventory(zipcode)
 
