@@ -47,7 +47,7 @@ def download_movies():
     page = 0
     while True:
         page += 1
-        url = "https://api.redbox.com/v3/products/movies?pageSize=10&pageNum=%s&apiKey=%s"\
+        url = "https://api.redbox.com/v3/products/movies?pageSize=50&pageNum=%s&apiKey=%s"\
             % (page, REDBOX_APIKEY)
         logging.info("Fetching products...")
         response = fetch(url, headers={'Accept': 'application/json'})
@@ -59,17 +59,27 @@ def download_movies():
             return
         for obj in movies['Products']['Movie']:
             movie_id = obj['@productId']
-            if Movie.get_by_id(movie_id) is not None:
-                continue
             logging.info("Saving metadata for %s" % obj['Title'])
-            movie = Movie(id=movie_id)
+            movie = Movie.get_by_id(movie_id)
+            if movie is None:
+                movie = Movie(id=movie_id)
             properties = {}
             for key in obj:
                 if type(obj[key]) != dict:
-                    properties[key.lower()] = obj[key]
+                    properties[key.replace('@','').lower()] = obj[key]
             movie.populate(**properties)
             if type(movie.title) != str and type(movie.title) != unicode:
                 movie.title = unicode(movie.title)
+            if 'RatingContext' in obj and \
+                    '@ratingReason' in obj['RatingContext']:
+                movie.ratingReason = obj['RatingContext']['@ratingReason']
+            if 'Actors' in obj and 'Person' in obj['Actors']:
+                movie.actors = ", ".join(obj['Actors']['Person'])
+            if 'BoxArtImages' in obj and 'link' in obj['BoxArtImages'] \
+                    and type(obj['BoxArtImages']['link']) == list \
+                    and len(obj['BoxArtImages']['link']) >= 3 \
+                    and '@href' in obj['BoxArtImages']['link'][2]:
+                movie.thumb = obj['BoxArtImages']['link'][2]['@href']
             movie.put()
 
             # Then look up Rotten Tomatoes scores
@@ -174,8 +184,8 @@ class MainHandler(webapp2.RequestHandler):
             return self.redirect('/{zip_code}'.format(zip_code=zip_code))
         template_values = {}
         template = jinja_environment.get_template('templates/index.html')
-
         self.response.out.write(template.render(template_values))
+        self.response.headers['Cache-Control'] = 'public, max-age=3600'
 
 
 class ZIPHandler(webapp2.RequestHandler):
@@ -185,9 +195,11 @@ class ZIPHandler(webapp2.RequestHandler):
         if results is None:
             results = fetch_inventory(zipcode)
 
-        template_values = {"results": results}
+        template_values = {"results": results,
+                           "zipcode": zipcode}
         template = jinja_environment.get_template('templates/zipcode.html')
         self.response.out.write(template.render(template_values))
+        self.response.headers['Cache-Control'] = 'public, max-age=3600'
 
 class MoviesHandler(webapp2.RequestHandler):
     def get(self):

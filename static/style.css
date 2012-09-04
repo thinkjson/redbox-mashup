@@ -1,5 +1,5 @@
-input.zip { padding: 10px; font-size: 26px; }
-button.submit { font-size: 26px; }
+input.zip { padding: 5px 10px; font-size: 26px;height: 30px;}
+button.submit { font-size: 26px; padding: 1px 10px;line-height: 40px;margin-bottom:8px;}
 p.submit { text-align: center; }
 #main {
     margin: auto;
@@ -8,9 +8,13 @@ p.submit { text-align: center; }
 
 #movies {
     list-style-type: none;
+    margin: 0;
 }
 #movies li {
+    margin-left: 0;
     margin-bottom: 2.5em;
+    padding-left: 120px;
+    min-height: 160px;
 }
 .movie-title {
     font-size: 24px;
@@ -22,3 +26,8 @@ p.submit { text-align: center; }
     border-bottom: 1px solid #EEEEEE;
     margin-right: 0.25em;
 }
+.r,.nr {background-color:#900;}
+.pg-13{background-color:#706;}
+.pg,.g,.reserve{background-color:#070;}
+.reserve{font-size:150%;width:150px;float:right;}
+.reserve a{color:#fff;}

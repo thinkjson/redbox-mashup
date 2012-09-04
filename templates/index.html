@@ -10,27 +10,18 @@
         <script src="js/vendor/modernizr-2.6.1.min.js"></script>
         -->
 
-        <style>
-            input.zip { padding: 10px; font-size: 26px; }
-            button.submit { font-size: 26px; }
-            p.submit { text-align: center; }
-            #main {
-                margin: auto;
-                width: 33%;
-            }
-        </style>
+        <link rel="stylesheet" href="/static/bootstrap-custom.css">
+        <link rel="stylesheet" href="/static/style.css">
     </head>
     <body>
 
 
         <div id="main">
-            <p>Find top rated movies near your zip-code, and reserve them now!</p>
+            <h1>Find top rated movies in your local Redbox kiosks</h1>
+            <p>To get started, enter your zip code:</p>
             <form action="" method="get" name="zip_code_form" id="id_zip_code_form">
                 <p>
-                    <input type="text" id="id_zip" name="zip" class="zip" />
-                </p>
-                <p class="submit">
-                    <button type="submit" class="btn submit">Submit</button>
+                    <input type="text" id="id_zip" name="zip" class="zip" /> <button type="submit" class="btn submit">Submit</button>
                 </p>
             </form>
 
@@ -52,6 +43,7 @@
                     console.log(zip_code);
                     window.location.href = "/" + zip_code;
                 });
+                $('#id_zip').focus();
             });
         </script>
 
