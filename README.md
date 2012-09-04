@@ -1,4 +1,4 @@
 redbox-mashup
 =============
 
-shows the top 10 highest rated movies within 10 miles of your location
+shows the top 50 highest rated movies in Redbox kiosks within 10 miles of your location
