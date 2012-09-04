@@ -87,6 +87,7 @@ def download_movies():
             # Don't recalc score if it's really bad
             if hasattr(movie, 'score') and movie.score < 50:
                 continue
+            movie.score = -1
 
             # Then look up Rotten Tomatoes scores
             url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?q=%s&apikey=%s"\
@@ -100,7 +101,7 @@ def download_movies():
             else:
                 content = response.content
             for result in json.loads(content.strip())['movies']:
-                if not hasattr(movie, 'score') and \
+                if (not hasattr(movie, 'score') or movie.score == -1) and \
                         levenshtein(movie.title, unicode(result['title']))/len(movie.title) < 0.2:
                     # This is where the magic happens
                     movie.critics_score = result['ratings']['critics_score']
@@ -111,22 +112,28 @@ def download_movies():
                         result['ratings']['critics_score'],
                         result['ratings']['audience_score']
                     ])/3)
-            if not hasattr(movie, 'score'):
-                movie.score = 0
 
-            # Adjust score based on release date
-            try:
-                daysago = (datetime.now() - \
-                    datetime.datetime.strptime(movie.redboxreleasedate, \
-                    "%Y-%m-%d")).days
-            except:
-                daysago = 180
-            if daysago <= 30:
-                movie.score += 5
-            if daysago <= 7:
-                movie.score += 10
-            if daysago > 180:
-                movie.score -= 20
+                    # Adjust score based on release date
+                    try:
+                        daysago = (datetime.now() - \
+                            datetime.datetime.strptime(movie.redboxreleasedate, \
+                            "%Y-%m-%d")).days
+                    except:
+                        daysago = 180
+                    if daysago <= 30:
+                        movie.score += 5
+                    if daysago <= 7:
+                        movie.score += 10
+                    if daysago > 180:
+                        movie.score -= 20
+                    if not hasattr(movie, 'score'):
+                        movie.score = 0
+
+                    # Save Rotten Tomatoes metadata
+                    try:
+                        movie.rottentomatoeslink = result['links']['alternate']
+                    except:
+                        pass
 
             # Save and return movie
             movie.put()
