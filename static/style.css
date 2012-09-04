@@ -1,0 +1,24 @@
+input.zip { padding: 10px; font-size: 26px; }
+button.submit { font-size: 26px; }
+p.submit { text-align: center; }
+#main {
+    margin: auto;
+    width: 50%;
+}
+
+#movies {
+    list-style-type: none;
+}
+#movies li {
+    margin-bottom: 2.5em;
+}
+.movie-title {
+    font-size: 24px;
+    line-height: 40px;
+    font-weight: bold;
+    margin: 10px 0;
+    text-rendering: optimizelegibility;
+    text-decoration: none;
+    border-bottom: 1px solid #EEEEEE;
+    margin-right: 0.25em;
+}
