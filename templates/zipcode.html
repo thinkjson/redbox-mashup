@@ -24,11 +24,33 @@
                         <a href="{{ movie.reservation_link }}" class="movie-title">{{ movie.title }}</a>
                         <span class="badge badge-inverse mpaa-rating {{ movie.mpaarating.lower() }}" title="MPAA Rating">{{ movie.mpaarating }}</span>
                         <span class="badge badge-inverse format {{ movie.format or movie['@format'] }}" title="Format">{{ movie.format or 'DVD' }}</span>
-                        <span class="badge badge-inverse critic-score" title="Critics Score">{{ movie.critics_score }}</span>
-                        <span class="badge badge-inverse audience-score" title="Audience Score">{{ movie.audience_score }}</span>
+                        <div class="rotten_tomatoes_scores_container">
+                            <p>
+                                Rotten Tomatoes<sup>&reg;</sup> Scores
+                                {% if movie.critics_score > 59 %}
+                                    <i class="icon tiny fresh"></i>
+                                {% else %}
+                                    <i class="icon tiny rotten"></i>
+                                {% endif %}
+                                <span class="badge badge-inverse critic-score" title="Rotten Tomatoes&reg; Critics Score">{{ movie.critics_score }}%</span>
+
+                                {% if movie.audience_score > 59 %}
+                                    <i class="icon tiny popcorn"></i>
+                                {% else %}
+                                    <i class="icon tiny spilled"></i>
+                                {% endif %}
+                                <span class="badge badge-inverse audience-score" title="Rotten Tomatoes&reg; Audience Score">{{ movie.audience_score }}%</span>
+                            </p>
+                        </div>
                         <div class="description">
-                            <p class="synopsis">{{ movie.synopsislong }}</p>
-                            <p class="consensus">{{ movie.critics_consensus }}</p>
+                            {#
+                                "synopsislong" Redbox link:
+                                    In accordance with http://developer.redbox.com/legal, retrieved 2012-09-04, 2.8(c): each time the term “Redbox” appears on any page or screen in your Application, it must link to the Redbox Site;
+                                    In accordance with http://developer.redbox.com/legal, retrieved 2012-09-04, 2.7(m)(ii): [may not] (m) state or imply, whether through use of the Redbox Marks or otherwise, ... (ii) that any of the Content is your own creation, ...
+                                So, let's be safe, and explicit with where we get this content:
+                            #}
+                            <p class="synopsis">{{ movie.synopsislong }} <small>(via <a href="{{ movie.websiteurl }}">Redbox</a>)</small></p>
+                            <p class="consensus">{{ movie.critics_consensus }} {% if movie.critics_consensus %}<small>(<a href="{{ movie.rottentomatoeslink }}">Rotten Tomatoes</a>)</small>{% endif %}</p>
                         </div>
                     </li>
                 {% endfor %}

@@ -133,7 +133,9 @@ def download_movies():
                     try:
                         movie.rottentomatoeslink = result['links']['alternate']
                     except:
-                        pass
+                        # This way, it always goes *at least* to the RT site,
+                        # and we avoid putting more logic in the template.
+                        movie.rottentomatoeslink = 'http://www.rottentomatoes.com/'
 
             # Save and return movie
             movie.put()
