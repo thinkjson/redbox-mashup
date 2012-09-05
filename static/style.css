@@ -1,9 +1,14 @@
 input.zip { padding: 5px 10px; font-size: 26px;height: 30px;}
 button.submit { font-size: 26px; padding: 1px 10px;line-height: 40px;margin-bottom:8px;}
 p.submit { text-align: center; }
-#main {
-    margin: auto;
-    width: 50%;
+
+.right {
+    float: right;
+}
+
+#how-it-works {
+    height: 426px;
+    background: url("/static/how-it-works.png") 50% 50% no-repeat;
 }
 
 #movies {

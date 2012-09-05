@@ -10,16 +10,19 @@
         <script src="js/vendor/modernizr-2.6.1.min.js"></script>
         -->
 
+        <link rel="stylesheet" href="/static/960.css">
         <link rel="stylesheet" href="/static/bootstrap-custom.css">
         <link rel="stylesheet" href="/static/style.css">
     </head>
     <body>
 
 
-        <div id="main">
+        <div id="main" class="container_12">
             <h1>Find top rated movies in your local Redbox kiosks</h1>
-            <p>To get started, enter your zip code:</p>
-            <form action="" method="get" name="zip_code_form" id="id_zip_code_form">
+            <h3>How it works:</h3>
+            <p id="how-it-works"></p>
+            <p class="grid_6 prefix_6">To get started, enter your zip code:</p>
+            <form action="" method="get" name="zip_code_form" id="id_zip_code_form" class="grid_6 prefix_6">
                 <p>
                     <input type="text" id="id_zip" name="zip" class="zip" /> <button type="submit" class="btn submit">Submit</button>
                 </p>
