@@ -36,3 +36,34 @@ p.submit { text-align: center; }
 .pg,.g,.reserve{background-color:#070;}
 .reserve{font-size:150%;width:150px;float:right;}
 .reserve a{color:#fff;}
+
+
+/*
+ * Rotten Tomatoes styles, via http://images.rottentomatoes.com/assets.html
+ * See also:
+ *   Brand guidlines: https://docs.google.com/viewer?a=v&pid=explorer&chrome=true&srcid=0B16JHvUXIodiMTliNjBiZTQtMmM4Yy00NGFhLWI3YzItOGM1ZjYwOGVkOGJk&hl=en
+ *     via: http://developer.rottentomatoes.com/apps/tos
+ */
+
+.icon {
+    display: inline-block;
+    vertical-align: text-bottom;
+    background:transparent url('http://images.rottentomatoescdn.com/images/redesign/icons-v2.png') no-repeat -312px -160px;
+}
+
+.icon.medium.fresh { background-position:-64px -128px; }
+.icon.medium.rotten { background-position:-96px -128px; }
+.icon.medium.certified { background-position:-160px -128px; }
+.icon.medium.popcorn { background-position:-32px -128px; }
+.icon.medium.spilled { background-position:-128px -128px; }
+
+.icon.small.fresh { background-position:-288px -48px;}
+.icon.small.rotten { background-position:-288px -96px;}
+.icon.small.certified { background-position:-288px -72px;}
+.icon.small.popcorn { background-position:-288px -24px;}
+.icon.small.spilled { background-position:-288px -120px; }
+
+.icon.tiny.fresh { background-position:-256px -144px; }
+.icon.tiny.rotten { background-position:-272px -144px; }
+.icon.tiny.popcorn { background-position:-288px -144px; }
+.icon.tiny.spilled { background-position:-208px -144px; }
