@@ -212,9 +212,12 @@ class MainHandler(webapp2.RequestHandler):
             # TODO: URL/Route duplication. Need to use named route:
             return self.redirect('/{zip_code}'.format(zip_code=zip_code))
         template_values = {}
-        template = jinja_environment.get_template('templates/index.html')
+        if self.request.get('loading') != '':
+            template = jinja_environment.get_template('templates/loading.html')
+        else:
+            template = jinja_environment.get_template('templates/index.html')
+            self.response.headers['Cache-Control'] = 'public, max-age=3600'
         self.response.out.write(template.render(template_values))
-        self.response.headers['Cache-Control'] = 'public, max-age=3600'
 
 
 class ZIPHandler(webapp2.RequestHandler):
