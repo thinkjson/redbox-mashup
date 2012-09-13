@@ -4,27 +4,34 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <title>Find top rated movies in your local Redbox kiosks</title>
-        <meta name="description" content="">
+        <meta name="description" content="Find top rated movies in your local Redbox kiosks">
+        <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;" />
+        <meta name="MobileOptimized" content="width" />
+        <meta name="HandheldFriendly" content="true" />
         <!--
         <link rel="stylesheet" href="css/main.css">
         <script src="js/vendor/modernizr-2.6.1.min.js"></script>
         -->
 
-        <link rel="stylesheet" href="/static/960.css">
         <link rel="stylesheet" href="/static/bootstrap-custom.css">
         <link rel="stylesheet" href="/static/style.css">
     </head>
     <body>
 
 
-        <div id="main" class="container_12">
+        <div id="main">
             <h1>Find top rated movies in your local Redbox kiosks</h1>
-            <h3>How it works:</h3>
-            <p id="how-it-works"></p>
-            <p class="grid_6 prefix_6">To get started, enter your zip code:</p>
+            <div id="howitworks">How it works:
+                <ol>
+                    <li>We look up movies in kiosks within 10 miles of your location</li>
+                    <li>We order that list of movies by Rotten Tomatoes scores</li>
+                    <li>We provide you the top 50 movies, along with direct links to the rental</li>
+                </ul>
+            </div>
+            <p>To get started, enter your zip code:</p>
             <form action="" method="get" name="zip_code_form" id="id_zip_code_form" class="grid_6 prefix_6">
                 <p>
-                    <input type="text" id="id_zip" name="zip" class="zip" /> <button type="submit" class="btn submit">Submit</button>
+                    <input type="number" id="id_zip" name="zip" class="zip" /> <button type="submit" class="btn submit">Submit</button>
                 </p>
             </form>
 

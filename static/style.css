@@ -1,9 +1,15 @@
-input.zip { padding: 5px 10px; font-size: 26px;height: 30px;}
+input.zip { padding: 5px 10px; font-size: 26px;height: 30px;width:100px;}
 button.submit { font-size: 26px; padding: 1px 10px;line-height: 40px;margin-bottom:8px;}
 p.submit { text-align: center; }
 
 .right {
     float: right;
+}
+
+#main {
+    max-width: 960px;
+    margin: 10px auto;
+    padding: 0 10px;
 }
 
 #how-it-works {
@@ -15,12 +21,20 @@ p.submit { text-align: center; }
     list-style-type: none;
     margin: 0;
 }
+
 #movies li {
     margin-left: 0;
     margin-bottom: 2.5em;
-    padding-left: 120px;
     min-height: 160px;
 }
+
+#movies li img {
+    border: 1px solid #222222;
+    float: left;
+    margin: 12px 10px 0 0;
+    box-shadow: 3px 3px 2px #333;
+}
+
 .movie-title {
     font-size: 24px;
     line-height: 40px;

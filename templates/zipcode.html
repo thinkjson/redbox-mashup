@@ -4,24 +4,26 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <title>Top rated movies in Redbox kiosks near {{ zipcode }}</title>
-        <meta name="description" content="">
+        <meta name="description" content="Top rated movies in Redbox kiosks near {{ zipcode }}">
+        <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;" />
+        <meta name="MobileOptimized" content="width" />
+        <meta name="HandheldFriendly" content="true" />
         <!--
         <link rel="stylesheet" href="css/main.css">
         <script src="js/vendor/modernizr-2.6.1.min.js"></script>
         -->
-        <link rel="stylesheet" href="/static/960.css">
         <link rel="stylesheet" href="/static/bootstrap-custom.css">
         <link rel="stylesheet" href="/static/style.css">
     </head>
     <body>
 
-        <div id="main" class="container_12">
+        <div id="main">
             <h1>Top rated movies in Redbox kiosks near {{ zipcode }}</h1>
             <p>Bookmark this page to see the best movies in all of your local Redbox kiosks at a glance. You may also choose to <a href="/">select a different zip code</a>.</p>
             <ul id="movies">
                 {% for movie in results %}
-                    <li style='background: url("{{ movie.thumb }}") 0 10px no-repeat'>
-                        <a href="{{ movie.reservation_link }}" class="movie-title">{{ movie.title }}</a>
+                    <li>
+                        <a href="{{ movie.reservation_link }}" class="movie-title"><img src="{{ movie.thumb }}" alt="thumbnail" />{{ movie.title }}</a>
                         <span class="badge badge-inverse mpaa-rating {{ movie.mpaarating.lower() }}" title="MPAA Rating">{{ movie.mpaarating }}</span>
                         <span class="badge badge-inverse format {{ movie.format or movie['@format'] }}" title="Format">{{ movie.format or 'DVD' }}</span>
                         <div class="rotten_tomatoes_scores_container">
@@ -49,8 +51,8 @@
                                     In accordance with http://developer.redbox.com/legal, retrieved 2012-09-04, 2.7(m)(ii): [may not] (m) state or imply, whether through use of the Redbox Marks or otherwise, ... (ii) that any of the Content is your own creation, ...
                                 So, let's be safe, and explicit with where we get this content:
                             #}
-                            <p class="synopsis">{{ movie.synopsislong }} <small>(via <a href="{{ movie.websiteurl }}">Redbox</a>)</small></p>
-                            <p class="consensus">{{ movie.critics_consensus }} {% if movie.critics_consensus %}<small>(<a href="{{ movie.rottentomatoeslink }}">Rotten Tomatoes</a>)</small>{% endif %}</p>
+                            <p class="synopsis">{{ movie.synopsislong }} <small><a href="{{ movie.websiteurl }}">Read more at Redbox</a></small></p>
+                            <p class="consensus">{{ movie.critics_consensus }} {% if movie.critics_consensus %}<small><a href="{{ movie.rottentomatoeslink }}">Read more at Rotten Tomatoes</a></small>{% endif %}</p>
                         </div>
                     </li>
                 {% endfor %}
