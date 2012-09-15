@@ -85,12 +85,11 @@ def download_movies(page):
         movie.put()
 
         # Don't recalc score if it's really bad
-        if hasattr(movie, 'score') and movie.score < 50:
+        if hasattr(movie, 'score') and movie.score < 50 and movie.score > 0:
             continue
         movie.score = -1
 
         # Then look up Rotten Tomatoes scores
-        logging.info("Recalculating score for %s" % obj['Title'])
         url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?q=%s&apikey=%s"\
             % (urllib.quote(unicodedata.normalize('NFKD', movie.title).encode('ascii', 'ignore')), RT_APIKEY)
         response = fetch(url)
@@ -105,6 +104,7 @@ def download_movies(page):
             if (not hasattr(movie, 'score') or movie.score == -1) and \
                     levenshtein(movie.title, unicode(result['title']))/len(movie.title) < 0.2:
                 # This is where the magic happens
+                logging.info("Recalculating score for %s" % obj['Title'])
                 movie.critics_score = result['ratings']['critics_score']
                 movie.critics_consensus = result['critics_consensus'] if 'critics_consensus' in result else ''
                 movie.audience_score = result['ratings']['audience_score']
@@ -125,15 +125,16 @@ def download_movies(page):
                 # Adjust score based on release date
                 try:
                     daysago = (datetime.now() - \
-                        datetime.datetime.strptime(movie.dvdreleasedate, \
+                        datetime.strptime(movie.dvdreleasedate, \
                         "%Y-%m-%d")).days
                 except:
-                    daysago = 180
+                    daysago = 90
+                movie.daysago = daysago
                 if daysago <= 30:
                     movie.score += 5
                 if daysago <= 7:
                     movie.score += 10
-                if daysago > 180:
+                if daysago > 90:
                     movie.score -= 20
                 if not hasattr(movie, 'score'):
                     movie.score = 0
