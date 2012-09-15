@@ -49,19 +49,22 @@ def download_movies():
     page = 0
     while True:
         page += 1
-        url = "https://api.redbox.com/v3/products/movies?pageSize=50&pageNum=%s&apiKey=%s"\
+        url = "https://api.redbox.com/v3/products/movies?pageSize=10&pageNum=%s&apiKey=%s"\
             % (page, REDBOX_APIKEY)
         logging.info("Fetching products...")
-        response = fetch(url, headers={'Accept': 'application/json'})
-        logging.info("complete!")
-        movies = json.loads(response.content)
-        if 'Movie' not in movies['Products'] or \
+        try:
+            response = fetch(url, headers={'Accept': 'application/json'})
+            logging.info("complete!")
+            movies = json.loads(response.content)
+        except:
+            movies = {}
+        if 'Products' not in movies or \
+                'Movie' not in movies['Products'] or \
                 len(movies['Products']['Movie']) == 0:
             logging.info("Download complete!")
             return
         for obj in movies['Products']['Movie']:
             movie_id = obj['@productId']
-            logging.info("Saving metadata for %s" % obj['Title'])
             movie = Movie.get_by_id(movie_id)
             if movie is None:
                 movie = Movie(id=movie_id)
@@ -90,6 +93,7 @@ def download_movies():
             movie.score = -1
 
             # Then look up Rotten Tomatoes scores
+            logging.info("Recalculating score for %s" % obj['Title'])
             url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?q=%s&apikey=%s"\
                 % (urllib.quote(unicodedata.normalize('NFKD', movie.title).encode('ascii', 'ignore')), RT_APIKEY)
             response = fetch(url)
@@ -113,10 +117,18 @@ def download_movies():
                         result['ratings']['audience_score']
                     ])/3)
 
+                    if 'release_dates' in result and \
+                            'dvd' in result['release_dates']:
+                        movie.dvdreleasedate = result['release_dates']['dvd']
+                    if 'release_dates' in result and \
+                            'theatre' in result['release_dates']:
+                        movie.theatrereleasedate = \
+                            result['release_dates']['theatre']
+
                     # Adjust score based on release date
                     try:
                         daysago = (datetime.now() - \
-                            datetime.datetime.strptime(movie.redboxreleasedate, \
+                            datetime.datetime.strptime(movie.dvdreleasedate, \
                             "%Y-%m-%d")).days
                     except:
                         daysago = 180
