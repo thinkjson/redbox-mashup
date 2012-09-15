@@ -45,112 +45,109 @@ def fetch(url, **kwargs):
     return response
 
 
-def download_movies():
-    page = 0
-    while True:
-        page += 1
-        url = "https://api.redbox.com/v3/products/movies?pageSize=10&pageNum=%s&apiKey=%s"\
-            % (page, REDBOX_APIKEY)
-        logging.info("Fetching products...")
-        try:
-            response = fetch(url, headers={'Accept': 'application/json'})
-            logging.info("complete!")
-            movies = json.loads(response.content)
-        except:
-            movies = {}
-        if 'Products' not in movies or \
-                'Movie' not in movies['Products'] or \
-                len(movies['Products']['Movie']) == 0:
-            logging.info("Download complete!")
-            return
-        for obj in movies['Products']['Movie']:
-            movie_id = obj['@productId']
-            movie = Movie.get_by_id(movie_id)
-            if movie is None:
-                movie = Movie(id=movie_id)
-            properties = {}
-            for key in obj:
-                if type(obj[key]) != dict:
-                    properties[key.replace('@','').lower()] = obj[key]
-            movie.populate(**properties)
-            if type(movie.title) != str and type(movie.title) != unicode:
-                movie.title = unicode(movie.title)
-            if 'RatingContext' in obj and \
-                    '@ratingReason' in obj['RatingContext']:
-                movie.ratingReason = obj['RatingContext']['@ratingReason']
-            if 'Actors' in obj and 'Person' in obj['Actors']:
-                movie.actors = ", ".join(obj['Actors']['Person'])
-            if 'BoxArtImages' in obj and 'link' in obj['BoxArtImages'] \
-                    and type(obj['BoxArtImages']['link']) == list \
-                    and len(obj['BoxArtImages']['link']) >= 3 \
-                    and '@href' in obj['BoxArtImages']['link'][2]:
-                movie.thumb = obj['BoxArtImages']['link'][2]['@href']
-            movie.put()
+def download_movies(page):
+    url = "https://api.redbox.com/v3/products/movies?pageSize=10&pageNum=%s&apiKey=%s"\
+        % (page, REDBOX_APIKEY)
+    logging.info("Fetching products...")
+    try:
+        response = fetch(url, headers={'Accept': 'application/json'})
+        logging.info("complete!")
+        movies = json.loads(response.content)
+    except:
+        movies = {}
+    if 'Products' not in movies or \
+            'Movie' not in movies['Products'] or \
+            len(movies['Products']['Movie']) == 0:
+        logging.info("Download complete!")
+        return
+    for obj in movies['Products']['Movie']:
+        movie_id = obj['@productId']
+        movie = Movie.get_by_id(movie_id)
+        if movie is None:
+            movie = Movie(id=movie_id)
+        properties = {}
+        for key in obj:
+            if type(obj[key]) != dict:
+                properties[key.replace('@','').lower()] = obj[key]
+        movie.populate(**properties)
+        if type(movie.title) != str and type(movie.title) != unicode:
+            movie.title = unicode(movie.title)
+        if 'RatingContext' in obj and \
+                '@ratingReason' in obj['RatingContext']:
+            movie.ratingReason = obj['RatingContext']['@ratingReason']
+        if 'Actors' in obj and 'Person' in obj['Actors']:
+            movie.actors = ", ".join(obj['Actors']['Person'])
+        if 'BoxArtImages' in obj and 'link' in obj['BoxArtImages'] \
+                and type(obj['BoxArtImages']['link']) == list \
+                and len(obj['BoxArtImages']['link']) >= 3 \
+                and '@href' in obj['BoxArtImages']['link'][2]:
+            movie.thumb = obj['BoxArtImages']['link'][2]['@href']
+        movie.put()
 
-            # Don't recalc score if it's really bad
-            if hasattr(movie, 'score') and movie.score < 50:
-                continue
-            movie.score = -1
+        # Don't recalc score if it's really bad
+        if hasattr(movie, 'score') and movie.score < 50:
+            continue
+        movie.score = -1
 
-            # Then look up Rotten Tomatoes scores
-            logging.info("Recalculating score for %s" % obj['Title'])
-            url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?q=%s&apikey=%s"\
-                % (urllib.quote(unicodedata.normalize('NFKD', movie.title).encode('ascii', 'ignore')), RT_APIKEY)
-            response = fetch(url)
-            if response.status_code != 200:
-                logging.error("Could not retrieve Rotten Tomatoes information for %s: %s" % (obj['Title'], url))
-                content = '{"movies":{}}'
-                if response.status_code == 403:
-                    return
-            else:
-                content = response.content
-            for result in json.loads(content.strip())['movies']:
-                if (not hasattr(movie, 'score') or movie.score == -1) and \
-                        levenshtein(movie.title, unicode(result['title']))/len(movie.title) < 0.2:
-                    # This is where the magic happens
-                    movie.critics_score = result['ratings']['critics_score']
-                    movie.critics_consensus = result['critics_consensus'] if 'critics_consensus' in result else ''
-                    movie.audience_score = result['ratings']['audience_score']
-                    movie.score = int(sum([
-                        result['ratings']['critics_score'],
-                        result['ratings']['critics_score'],
-                        result['ratings']['audience_score']
-                    ])/3)
+        # Then look up Rotten Tomatoes scores
+        logging.info("Recalculating score for %s" % obj['Title'])
+        url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?q=%s&apikey=%s"\
+            % (urllib.quote(unicodedata.normalize('NFKD', movie.title).encode('ascii', 'ignore')), RT_APIKEY)
+        response = fetch(url)
+        if response.status_code != 200:
+            logging.error("Could not retrieve Rotten Tomatoes information for %s: %s" % (obj['Title'], url))
+            content = '{"movies":{}}'
+            if response.status_code == 403:
+                return
+        else:
+            content = response.content
+        for result in json.loads(content.strip())['movies']:
+            if (not hasattr(movie, 'score') or movie.score == -1) and \
+                    levenshtein(movie.title, unicode(result['title']))/len(movie.title) < 0.2:
+                # This is where the magic happens
+                movie.critics_score = result['ratings']['critics_score']
+                movie.critics_consensus = result['critics_consensus'] if 'critics_consensus' in result else ''
+                movie.audience_score = result['ratings']['audience_score']
+                movie.score = int(sum([
+                    result['ratings']['critics_score'],
+                    result['ratings']['critics_score'],
+                    result['ratings']['audience_score']
+                ])/3)
 
-                    if 'release_dates' in result and \
-                            'dvd' in result['release_dates']:
-                        movie.dvdreleasedate = result['release_dates']['dvd']
-                    if 'release_dates' in result and \
-                            'theatre' in result['release_dates']:
-                        movie.theatrereleasedate = \
-                            result['release_dates']['theatre']
+                if 'release_dates' in result and \
+                        'dvd' in result['release_dates']:
+                    movie.dvdreleasedate = result['release_dates']['dvd']
+                if 'release_dates' in result and \
+                        'theatre' in result['release_dates']:
+                    movie.theatrereleasedate = \
+                        result['release_dates']['theatre']
 
-                    # Adjust score based on release date
-                    try:
-                        daysago = (datetime.now() - \
-                            datetime.datetime.strptime(movie.dvdreleasedate, \
-                            "%Y-%m-%d")).days
-                    except:
-                        daysago = 180
-                    if daysago <= 30:
-                        movie.score += 5
-                    if daysago <= 7:
-                        movie.score += 10
-                    if daysago > 180:
-                        movie.score -= 20
-                    if not hasattr(movie, 'score'):
-                        movie.score = 0
+                # Adjust score based on release date
+                try:
+                    daysago = (datetime.now() - \
+                        datetime.datetime.strptime(movie.dvdreleasedate, \
+                        "%Y-%m-%d")).days
+                except:
+                    daysago = 180
+                if daysago <= 30:
+                    movie.score += 5
+                if daysago <= 7:
+                    movie.score += 10
+                if daysago > 180:
+                    movie.score -= 20
+                if not hasattr(movie, 'score'):
+                    movie.score = 0
 
-                    # Save Rotten Tomatoes metadata
-                    try:
-                        movie.rottentomatoeslink = result['links']['alternate']
-                    except:
-                        # This way, it always goes *at least* to the RT site,
-                        # and we avoid putting more logic in the template.
-                        movie.rottentomatoeslink = 'http://www.rottentomatoes.com/'
+                # Save Rotten Tomatoes metadata
+                try:
+                    movie.rottentomatoeslink = result['links']['alternate']
+                except:
+                    # This way, it always goes *at least* to the RT site,
+                    # and we avoid putting more logic in the template.
+                    movie.rottentomatoeslink = 'http://www.rottentomatoes.com/'
 
-            # Save and return movie
-            movie.put()
+        # Save and return movie
+        movie.put()
 
 
 def fetch_inventory(zipcode):
@@ -254,11 +251,9 @@ class ZIPHandler(webapp2.RequestHandler):
 class MoviesHandler(webapp2.RequestHandler):
     @admin_required
     def get(self):
-        deferred.defer(download_movies, _target='movies')
+        for page in range(50):
+            deferred.defer(download_movies, page, _target='movies')
         logging.info("Inventory download queued")
-
-#MovieInfoHandler(webapp2.RequestHandler):
-#    def get(self, movie_id):
 
 
 app = webapp2.WSGIApplication([
