@@ -12,13 +12,16 @@ handlers:
 - url: /robots\.txt
   static_files: robots.txt
   upload: robots\.txt
+  expiration: 30d
 
 - url: /favicon\.ico
   static_files: favicon.ico
   upload: favicon\.ico
+  expiration: 30d
 
 - url: /static
   static_dir: static
+  expiration: 1d
 
 - url: /.*
   script: main.app
