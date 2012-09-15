@@ -12,6 +12,22 @@ p.submit { text-align: center; }
     padding: 0 10px;
 }
 
+#forkme {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+#forkme img {
+    border: 0;
+}
+
+@media (max-width: 1000px) {
+    #forkme {
+        display: none;
+    }
+}
+
 #how-it-works {
     height: 426px;
     background: url("/static/how-it-works.png") 50% 50% no-repeat;
