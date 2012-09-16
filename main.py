@@ -102,17 +102,18 @@ def download_movies(page):
             content = response.content
         for result in json.loads(content.strip())['movies']:
             if (not hasattr(movie, 'score') or movie.score == -1) and \
-                    levenshtein(movie.title, unicode(result['title']))/len(movie.title) < 0.2:
+                    levenshtein(movie.title, unicode(result['title'])) / \
+                    len(movie.title) < 0.2:
                 # This is where the magic happens
                 logging.info("Recalculating score for %s" % obj['Title'])
                 movie.critics_score = result['ratings']['critics_score']
-                movie.critics_consensus = result['critics_consensus'] if 'critics_consensus' in result else ''
+                movie.critics_consensus = result['critics_consensus'] \
+                    if 'critics_consensus' in result else ''
                 movie.audience_score = result['ratings']['audience_score']
-                movie.score = int(sum([
-                    result['ratings']['critics_score'],
-                    result['ratings']['critics_score'],
+                movie.score = int((
+                    result['ratings']['critics_score'] +
                     result['ratings']['audience_score']
-                ])/3)
+                ) / 2)
 
                 if 'release_dates' in result and \
                         'dvd' in result['release_dates']:
