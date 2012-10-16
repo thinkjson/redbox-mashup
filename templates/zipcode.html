@@ -23,7 +23,7 @@
             <ul id="movies">
                 {% for movie in results %}
                     <li>
-                        <a href="{{ movie.reservation_link }}" class="movie-title"><img src="{{ movie.thumb }}" alt="thumbnail" />{{ movie.title }}</a>
+                        <a href="{{ movie.reservation_link }}&mobile=false" class="movie-title"><img src="{{ movie.thumb }}" alt="thumbnail" />{{ movie.title }}</a>
                         <span class="badge badge-inverse mpaa-rating {{ movie.mpaarating.lower() }}" title="MPAA Rating">{{ movie.mpaarating }}</span>
                         <span class="badge badge-inverse format {{ movie.format or movie['@format'] }}" title="Format">{{ movie.format or 'DVD' }}</span>
                         <span class="badge badge-inverse" title="Score">{{ movie.score }} points</span>
@@ -53,7 +53,7 @@
                                 So, let's be safe, and explicit with where we get this content:
                             #}
                             <p class="synopsis">
-                                {% if movie.dvdreleasedate %}Released on DVD: {{ movie.dvdreleasedate }}<br />{% endif %}{{ movie.synopsislong }} <small><a href="{{ movie.websiteurl }}">Read more at Redbox</a></small></p>
+                                {% if movie.dvdreleasedate %}Released {{ movie.dvdreleasedate }}<br />{% endif %}{{ movie.synopsislong }} <small><a href="{{ movie.websiteurl }}">Read more at Redbox</a></small></p>
                             <p class="consensus">{{ movie.critics_consensus }} {% if movie.critics_consensus %}<small><a href="{{ movie.rottentomatoeslink }}">Read more at Rotten Tomatoes</a></small>{% endif %}</p>
                         </div>
                     </li>

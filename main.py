@@ -102,17 +102,18 @@ def download_movies(page):
             content = response.content
         for result in json.loads(content.strip())['movies']:
             if (not hasattr(movie, 'score') or movie.score == -1) and \
-                    levenshtein(movie.title, unicode(result['title']))/len(movie.title) < 0.2:
+                    levenshtein(movie.title, unicode(result['title'])) / \
+                    len(movie.title) < 0.2:
                 # This is where the magic happens
                 logging.info("Recalculating score for %s" % obj['Title'])
                 movie.critics_score = result['ratings']['critics_score']
-                movie.critics_consensus = result['critics_consensus'] if 'critics_consensus' in result else ''
+                movie.critics_consensus = result['critics_consensus'] \
+                    if 'critics_consensus' in result else ''
                 movie.audience_score = result['ratings']['audience_score']
-                movie.score = int(sum([
-                    result['ratings']['critics_score'],
-                    result['ratings']['critics_score'],
+                movie.score = int((
+                    result['ratings']['critics_score'] +
                     result['ratings']['audience_score']
-                ])/3)
+                ) / 2)
 
                 if 'release_dates' in result and \
                         'dvd' in result['release_dates']:
@@ -210,6 +211,7 @@ def fetch_inventory(zipcode):
 
     # Persist list to memcache
     memcache.set("zipcode-%s" % zipcode, unique_results, time=3600)
+    memcache.set("zipcode-%s-backup" % zipcode, unique_results)
     return unique_results
 
 
@@ -218,7 +220,7 @@ class MainHandler(webapp2.RequestHandler):
         # If zip code entered, without javascript working,
         # we'll receive the zip code here. Let's handle that
         # and redirect to the proper place:
-        zip_code = self.request.GET.get('zip')  # Empty string default in webapp2.
+        zip_code = self.request.GET.get('zip')
         if zip_code and re.match(r'^\d{5}$', zip_code):
             # TODO: Default 302 okay? Otherwise, set 'permanent=True'.
             # TODO: URL/Route duplication. Need to use named route:
@@ -236,18 +238,24 @@ class ZIPHandler(webapp2.RequestHandler):
     def get(self, zipcode):
         results = memcache.get("zipcode-%s" % zipcode)
         if results is None or results == "loading":
+            backup_results = memcache.get("zipcode-%s-backup" % zipcode)
             if results != "loading":
                 memcache.set("zipcode-%s" % zipcode, "loading", time=3600)
                 deferred.defer(fetch_inventory, zipcode)
-            template = jinja_environment.get_template('templates/loading.html')
-            self.response.out.write(template.render({}))
-            return
+            if backup_results is None:
+                template = jinja_environment.get_template(
+                    'templates/loading.html')
+                self.response.out.write(template.render({}))
+                return
+            else:
+                results = backup_results
 
         template_values = {"results": results,
                            "zipcode": zipcode}
         template = jinja_environment.get_template('templates/zipcode.html')
         self.response.out.write(template.render(template_values))
         self.response.headers['Cache-Control'] = 'public, max-age=3600'
+
 
 class MoviesHandler(webapp2.RequestHandler):
     @admin_required
