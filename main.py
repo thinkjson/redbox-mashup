@@ -258,11 +258,11 @@ class ZIPHandler(webapp2.RequestHandler):
 
 
 class MoviesHandler(webapp2.RequestHandler):
-    @admin_required
     def get(self):
         for page in range(50):
             deferred.defer(download_movies, page, _target='movies')
         logging.info("Inventory download queued")
+        self.abort(404)
 
 
 app = webapp2.WSGIApplication([
