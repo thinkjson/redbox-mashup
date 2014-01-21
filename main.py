@@ -106,13 +106,15 @@ def download_movies(page):
                     len(movie.title) < 0.2:
                 # This is where the magic happens
                 logging.info("Recalculating score for %s" % obj['Title'])
-                movie.critics_score = result['ratings']['critics_score']
+                movie.critics_score = int(result['ratings']['critics_score'])
                 movie.critics_consensus = result['critics_consensus'] \
                     if 'critics_consensus' in result else ''
-                movie.audience_score = result['ratings']['audience_score']
+                if movie.critics_consensus == '':
+                    movie.critics_score = 0
+                movie.audience_score = int(result['ratings']['audience_score'])
                 movie.score = int((
-                    result['ratings']['critics_score'] +
-                    result['ratings']['audience_score']
+                    movie.critics_score +
+                    movie.audience_score
                 ) / 2)
 
                 if 'release_dates' in result and \
