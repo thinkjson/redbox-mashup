@@ -85,7 +85,7 @@ def download_movies(page):
         movie.put()
 
         # Don't recalc score if it's really bad
-        if hasattr(movie, 'score') and movie.score < 50 and movie.score > 0:
+        if hasattr(movie, 'score') and movie.score < 40 and movie.score > 0:
             continue
         movie.score = -1
 
@@ -187,7 +187,7 @@ def fetch_inventory(zipcode):
             if movie is None:
                 # TODO - queue creation
                 continue
-            if not hasattr(movie, 'score'):
+            if not hasattr(movie, 'score') or not hasattr(movie, 'critics_consensus'):
                 movie.key.delete()
                 continue
             distance = float(kiosk\
