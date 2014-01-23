@@ -24,6 +24,7 @@
                 {% for movie in results %}
                     <li>
                         <a href="{{ movie.reservation_link }}&mobile=false" class="movie-title"><img src="{{ movie.thumb }}" alt="thumbnail" />{{ movie.title }}</a>
+                        <!-- {{ movie.key.id() }} -->
                         <span class="badge badge-inverse mpaa-rating {{ movie.mpaarating.lower() }}" title="MPAA Rating">{{ movie.mpaarating }}</span>
                         <span class="badge badge-inverse format {{ movie.format or movie['@format'] }}" title="Format">{{ movie.format or 'DVD' }}</span>
                         <span class="badge badge-inverse" title="Score">{{ movie.score }} points</span>
