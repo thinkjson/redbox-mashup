@@ -15,6 +15,7 @@ from levenshtein import levenshtein
 from datetime import date
 import re
 import copy
+import time
 import unicodedata
 from operator import itemgetter
 from hashlib import md5
@@ -61,6 +62,7 @@ def download_movies(page):
         logging.info("Download complete!")
         return
     for obj in movies['Products']['Movie']:
+        time.sleep(1)
         movie_id = obj['@productId']
         movie = Movie.get_by_id(movie_id)
         if movie is None:
@@ -97,7 +99,8 @@ def download_movies(page):
             logging.error("Could not retrieve Rotten Tomatoes information for %s: %s" % (obj['Title'], url))
             content = '{"movies":{}}'
             if response.status_code == 403:
-                return
+                time.sleep(5)
+                continue
         else:
             content = response.content
         for result in json.loads(content.strip())['movies']:
@@ -112,10 +115,7 @@ def download_movies(page):
                 if movie.critics_consensus == '':
                     movie.critics_score = 0
                 movie.audience_score = int(result['ratings']['audience_score'])
-                movie.score = int((
-                    movie.critics_score +
-                    movie.audience_score
-                ) / 2)
+                movie.score = movie.audience_score
 
                 if 'release_dates' in result and \
                         'dvd' in result['release_dates']:
@@ -168,7 +168,7 @@ def fetch_inventory(zipcode):
     num_kiosks = 0
     for kiosk in kiosks:
         num_kiosks += 1
-        if num_kiosks > 5:
+        if num_kiosks > 7:
             continue
         store_id = kiosk.attrib['storeId']
         logging.info("Looking up inventory for store %s" % store_id)
