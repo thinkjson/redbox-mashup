@@ -92,63 +92,57 @@ def download_movies(page):
         movie.score = -1
 
         # Then look up Rotten Tomatoes scores
-        url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?q=%s&apikey=%s"\
-            % (urllib.quote(unicodedata.normalize('NFKD', movie.title).encode('ascii', 'ignore')), RT_APIKEY)
+        url = "http://www.omdbapi.com/?t=%s&tomatoes=true"\
+            % (urllib.quote(unicodedata.normalize('NFKD', movie.title).encode('ascii', 'ignore')))
+        if hasattr(movie, 'releaseyear'):
+            url += "&y=%s" % (movie.releaseyear)
         response = fetch(url)
+        
         if response.status_code != 200:
             logging.error("Could not retrieve Rotten Tomatoes information for %s: %s" % (obj['Title'], url))
-            content = '{"movies":{}}'
-            if response.status_code == 403:
-                time.sleep(5)
-                continue
+            continue
         else:
-            content = response.content
-        for result in json.loads(content.strip())['movies']:
-            if (not hasattr(movie, 'score') or movie.score == -1) and \
-                    levenshtein(movie.title, unicode(result['title'])) / \
-                    len(movie.title) < 0.2:
-                # This is where the magic happens
-                logging.info("Recalculating score for %s" % obj['Title'])
-                movie.critics_score = int(result['ratings']['critics_score'])
-                movie.critics_consensus = result['critics_consensus'] \
-                    if 'critics_consensus' in result else ''
-                if movie.critics_consensus == '':
-                    movie.critics_score = 0
-                movie.audience_score = int(result['ratings']['audience_score'])
-                movie.score = movie.audience_score
+            result = json.loads(response.content)
+            if 'Response' in result and result['Response'] == 'False':
+                continue
 
-                if 'release_dates' in result and \
-                        'dvd' in result['release_dates']:
-                    movie.dvdreleasedate = result['release_dates']['dvd']
-                if 'release_dates' in result and \
-                        'theatre' in result['release_dates']:
-                    movie.theatrereleasedate = \
-                        result['release_dates']['theatre']
+        # This is where the magic happens
+        logging.info("Recalculating score for %s" % obj['Title'])
+        movie.thumb = result['Poster'] if 'Poster' in result else ''
+        try:
+            movie.critics_score = int(result['tomatoMeter']) if 'tomatoMeter' in result else 0
+        except:
+            movie.critics_score = 0
+        try:
+            movie.critics_consensus = result['tomatoConsensus'] if 'tomatoConsensus' in result else ''
+        except:
+            movie.critics_consensus = ''
+        try:
+            movie.audience_score = int(result['tomatoUserMeter']) if 'tomatoUserMeter' in result else 0
+        except:
+            movie.audience_score = 0
+        movie.score = movie.audience_score
 
-                # Adjust score based on release date
-                try:
-                    daysago = (datetime.now() - \
-                        datetime.strptime(movie.dvdreleasedate, \
-                        "%Y-%m-%d")).days
-                except:
-                    daysago = 90
-                movie.daysago = daysago
-                if daysago <= 30:
-                    movie.score += 5
-                if daysago <= 7:
-                    movie.score += 10
-                if daysago > 90:
-                    movie.score -= 20
-                if not hasattr(movie, 'score'):
-                    movie.score = 0
+        if 'Released' in result:
+            try:
+                movie.releasedate = datetime.strptime(result['Released'], "%d %b %Y")
+            except:
+                movie.releasedate = None
 
-                # Save Rotten Tomatoes metadata
-                try:
-                    movie.rottentomatoeslink = result['links']['alternate']
-                except:
-                    # This way, it always goes *at least* to the RT site,
-                    # and we avoid putting more logic in the template.
-                    movie.rottentomatoeslink = 'http://www.rottentomatoes.com/'
+        # Adjust score based on release date
+        try:
+            daysago = (datetime.now() - movie.releasedate).days
+        except:
+            daysago = 90
+        movie.daysago = daysago
+        if daysago <= 30:
+            movie.score += 5
+        if daysago <= 7:
+            movie.score += 10
+        if daysago > 90:
+            movie.score -= 20
+        if not hasattr(movie, 'score'):
+            movie.score = 0
 
         # Save and return movie
         movie.put()

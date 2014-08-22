@@ -42,13 +42,15 @@ p.submit { text-align: center; }
     margin-left: 0;
     margin-bottom: 2.5em;
     min-height: 160px;
+    clear: both;
 }
 
 #movies li img {
     border: 1px solid #222222;
     float: left;
-    margin: 12px 10px 0 0;
+    margin: 12px 10px 30px 0;
     box-shadow: 3px 3px 2px #333;
+    height: 250px;
 }
 
 .movie-title {

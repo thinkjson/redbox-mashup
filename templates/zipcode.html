@@ -23,7 +23,9 @@
             <ul id="movies">
                 {% for movie in results %}
                     <li>
-                        <a href="{{ movie.reservation_link }}&mobile=false" class="movie-title"><img src="{{ movie.thumb }}" alt="thumbnail" />{{ movie.title }}</a>
+                        <a href="{{ movie.reservation_link }}&mobile=false" class="movie-title">
+                            {% if movie.thumb %}<img src="{{ movie.thumb.replace('ia.media-imdb.com', 'cds.y8j3r7s5.hwcdn.net') }}" alt="thumbnail" />{% endif %}{{ movie.title }}
+                        </a>
                         <!-- {{ movie.productid }} -->
                         <span class="badge badge-inverse mpaa-rating {{ movie.mpaarating.lower() }}" title="MPAA Rating">{{ movie.mpaarating }}</span>
                         <span class="badge badge-inverse format {{ movie.format or movie['@format'] }}" title="Format">{{ movie.format or 'DVD' }}</span>
@@ -54,8 +56,8 @@
                                 So, let's be safe, and explicit with where we get this content:
                             #}
                             <p class="synopsis">
-                                {% if movie.dvdreleasedate %}Released {{ movie.dvdreleasedate }}<br />{% endif %}{{ movie.synopsislong }} <small><a href="{{ movie.websiteurl }}">Read more at Redbox</a></small></p>
-                            <p class="consensus">{{ movie.critics_consensus }} {% if movie.critics_consensus %}<small><a href="{{ movie.rottentomatoeslink }}">Read more at Rotten Tomatoes</a></small>{% endif %}</p>
+                                {% if movie.releasedate %}Released {{ movie.releasedate.strftime("%B %Y") }}<br />{% endif %}{{ movie.synopsislong }} <small><a href="{{ movie.websiteurl }}">Read more at Redbox</a></small></p>
+                            <p class="consensus">{{ movie.critics_consensus }} {% if movie.critics_consensus %}<small><a href="http://www.rottentomatoes.com/search/?search={{ movie.title }}">Read more at Rotten Tomatoes</a></small>{% endif %}</p>
                         </div>
                     </li>
                 {% endfor %}
