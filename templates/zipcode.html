@@ -47,6 +47,10 @@
                                 {% endif %}
                                 <span class="badge badge-inverse audience-score" title="Rotten Tomatoes&reg; Audience Score">{{ movie.audience_score }}%</span>
                             </p>
+                            {% if movie.metascore %}<p>
+                                OMDB Metascore
+                                <span class="badge badge-inverse" title="OMDB Metascore">{{ movie.metascore }}%</span>
+                            </p>{% endif %}
                         </div>
                         <div class="description">
                             {#

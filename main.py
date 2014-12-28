@@ -60,6 +60,7 @@ def download_movies(page):
             'Movie' not in movies['Products'] or \
             len(movies['Products']['Movie']) == 0:
         logging.info("Download complete!")
+        logging.info(response.content)
         return
     for obj in movies['Products']['Movie']:
         time.sleep(1)
@@ -87,8 +88,8 @@ def download_movies(page):
         movie.put()
 
         # Don't recalc score if it's really bad
-        if hasattr(movie, 'score') and movie.score < 40 and movie.score > 0:
-            continue
+        #if hasattr(movie, 'score') and movie.score < 40 and movie.score > 0:
+        #    continue
         movie.score = -1
 
         # Then look up Rotten Tomatoes scores
@@ -110,6 +111,10 @@ def download_movies(page):
         logging.info("Recalculating score for %s" % obj['Title'])
         movie.thumb = result['Poster'] if 'Poster' in result else ''
         try:
+            movie.metascore = int(result['Metascore']) if 'Metascore' in result else 0
+        except:
+            movie.metascore = 0
+        try:
             movie.critics_score = int(result['tomatoMeter']) if 'tomatoMeter' in result else 0
         except:
             movie.critics_score = 0
@@ -121,7 +126,7 @@ def download_movies(page):
             movie.audience_score = int(result['tomatoUserMeter']) if 'tomatoUserMeter' in result else 0
         except:
             movie.audience_score = 0
-        movie.score = movie.audience_score
+        movie.score = int((movie.metascore + movie.critics_score) / 2)
 
         if 'Released' in result:
             try:
