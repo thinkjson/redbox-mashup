@@ -96,7 +96,7 @@ def download_movies():
             % (urllib.quote(unicodedata.normalize('NFKD', movie.title).encode('ascii', 'ignore')))
         if hasattr(movie, 'releaseyear'):
             url += "&y=%s" % (movie.releaseyear)
-        response = fetch(url)
+        response = fetch(url, deadline=600)
         
         if response.status_code != 200:
             logging.error("Could not retrieve Rotten Tomatoes information for %s: %s" % (obj['Title'], url))
