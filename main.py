@@ -49,21 +49,16 @@ def fetch(url, **kwargs):
 def download_movies():
     url = "https://api.outerwall.com/ws/redbox/products/movies?apiKey=%s" % REDBOX_APIKEY
     logging.info("Fetching products...")
-    try:
-        response = fetch(url, headers={'Accept': 'application/json'})
-        logging.info("complete!")
-        movies = json.loads(response.content)
-    except:
-        response = None
-        movies = {}
+    response = urlfetch.fetch(url,
+         headers={'Accept': 'application/json'},
+         deadline=600)
+    logging.info("complete!")
+    movies = json.loads(response.content)
     if 'Products' not in movies or \
             'Movie' not in movies['Products'] or \
             len(movies['Products']['Movie']) == 0:
         logging.info("Download complete!")
-        if response is not None:
-            logging.info(response.content)
-        else:
-            logging.error('Request could not be completed')
+        logging.info(response.content)
         return
     for obj in movies['Products']['Movie']:
         time.sleep(1)
