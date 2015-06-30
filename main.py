@@ -46,21 +46,24 @@ def fetch(url, **kwargs):
     return response
 
 
-def download_movies(page):
-    url = "https://api.redbox.com/v3/products/movies?pageSize=10&pageNum=%s&apiKey=%s"\
-        % (page, REDBOX_APIKEY)
+def download_movies():
+    url = "https://api.outerwall.com/ws/redbox/products/movies?apiKey=%s" % REDBOX_APIKEY
     logging.info("Fetching products...")
     try:
         response = fetch(url, headers={'Accept': 'application/json'})
         logging.info("complete!")
         movies = json.loads(response.content)
     except:
+        response = None
         movies = {}
     if 'Products' not in movies or \
             'Movie' not in movies['Products'] or \
             len(movies['Products']['Movie']) == 0:
         logging.info("Download complete!")
-        logging.info(response.content)
+        if response is not None:
+            logging.info(response.content)
+        else:
+            logging.error('Request could not be completed')
         return
     for obj in movies['Products']['Movie']:
         time.sleep(1)
@@ -157,7 +160,7 @@ def fetch_inventory(zipcode):
     # Fetch inventory for all kiosks within 10 miles
     results = []
     logging.info("Fetching kiosks near %s" % zipcode)
-    url = "https://api.redbox.com/stores/postalcode/%s?apiKey=%s"\
+    url = "https://api.outerwall.com/ws/redbox/stores/postalcode/%s?apiKey=%s"\
         % (zipcode, REDBOX_APIKEY)
     response = fetch(url)
     if response.status_code != 200:
@@ -170,12 +173,14 @@ def fetch_inventory(zipcode):
         if num_kiosks > 7:
             continue
         store_id = kiosk.attrib['storeId']
-        logging.info("Looking up inventory for store %s" % store_id)
-        url = "https://api.redbox.com/v3/inventory/stores/%s?apiKey=%s"\
-            % (store_id, REDBOX_APIKEY)
+        lat = kiosk[0].get('lat')
+        lon = kiosk[0].get('long')
+        logging.info("Looking up inventory for store %s,%s" % (lat,lon))
+        url = "https://api.outerwall.com/ws/redbox/inventory/stores/latlong/%s,%s?apiKey=%s"\
+            % (lat, lon, REDBOX_APIKEY)
         response = fetch(url)
         if response.status_code != 200:
-            logging.error("Could not retrieve inventory for store: %s" % store_id)
+            logging.error("Could not retrieve inventory for store: %s,%s" % (lat,lon))
             continue
         inventory_root = etree.fromstring(response.content)
         for inventory in inventory_root.iterchildren().next().iterchildren():
@@ -190,7 +195,7 @@ def fetch_inventory(zipcode):
                 movie.key.delete()
                 continue
             distance = float(kiosk\
-                .find('{http://api.redbox.com/Stores/v2}DistanceFromSearchLocation')\
+                .find('DistanceFromSearchLocation')\
                 .text)
             output = movie.to_dict()
             output['distance'] = distance
@@ -257,11 +262,9 @@ class ZIPHandler(webapp2.RequestHandler):
         self.response.out.write(template.render(template_values))
         self.response.headers['Cache-Control'] = 'public, max-age=3600'
 
-
 class MoviesHandler(webapp2.RequestHandler):
     def get(self):
-        for page in range(50):
-            deferred.defer(download_movies, page, _target='movies')
+        deferred.defer(download_movies, _target='movies')
         logging.info("Inventory download queued")
         self.abort(404)
 
@@ -269,5 +272,5 @@ class MoviesHandler(webapp2.RequestHandler):
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
     (r'/(\d{5})', ZIPHandler),
-    ('/movies/', MoviesHandler)
+    ('/movies/', MoviesHandler),
 ])
