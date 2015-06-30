@@ -78,6 +78,7 @@ def download_movies():
         movie.populate(**properties)
         if type(movie.title) != str and type(movie.title) != unicode:
             movie.title = unicode(movie.title)
+        logging.info('Fetched %s' % movie.title)
         if 'RatingContext' in obj and \
                 '@ratingReason' in obj['RatingContext']:
             movie.ratingReason = obj['RatingContext']['@ratingReason']
@@ -162,31 +163,31 @@ def fetch_inventory(zipcode):
     logging.info("Fetching kiosks near %s" % zipcode)
     url = "https://api.outerwall.com/ws/redbox/stores/postalcode/%s?apiKey=%s"\
         % (zipcode, REDBOX_APIKEY)
-    response = fetch(url)
+    response = fetch(url, headers={'Accept': 'application/json'})
     if response.status_code != 200:
-            raise ValueError("Could not retrieve kiosks near %s" % zipcode)
-    kiosks_root = etree.fromstring(response.content)
-    kiosks = kiosks_root.iterchildren()
+        raise ValueError("Could not retrieve kiosks near %s" % zipcode)
+    kiosks_root = json.loads(response.content)
+    kiosks = kiosks_root['StoreBulkList']['Store']
     num_kiosks = 0
     for kiosk in kiosks:
         num_kiosks += 1
         if num_kiosks > 7:
             continue
-        store_id = kiosk.attrib['storeId']
-        lat = kiosk[0].get('lat')
-        lon = kiosk[0].get('long')
+        store_id = kiosk['@storeId']
+        lat = kiosk['Location'].get('@lat')
+        lon = kiosk['Location'].get('@long')
         logging.info("Looking up inventory for store %s,%s" % (lat,lon))
         url = "https://api.outerwall.com/ws/redbox/inventory/stores/latlong/%s,%s?apiKey=%s"\
             % (lat, lon, REDBOX_APIKEY)
-        response = fetch(url)
+        response = fetch(url, headers={'Accept': 'application/json'})
         if response.status_code != 200:
             logging.error("Could not retrieve inventory for store: %s,%s" % (lat,lon))
             continue
-        inventory_root = etree.fromstring(response.content)
-        for inventory in inventory_root.iterchildren().next().iterchildren():
-            if inventory.attrib['inventoryStatus'] != "InStock":
+        inventory_root = json.loads(response.content)
+        for inventory in inventory_root['Inventory']['StoreInventory'][0]['ProductInventory']:
+            if inventory['@inventoryStatus'] != "InStock":
                 continue
-            movie_id = inventory.attrib['productId']
+            movie_id = inventory['@productId']
             movie = Movie.get_by_id(movie_id)
             if movie is None:
                 # TODO - queue creation
@@ -194,9 +195,7 @@ def fetch_inventory(zipcode):
             if not hasattr(movie, 'score') or not hasattr(movie, 'critics_consensus'):
                 movie.key.delete()
                 continue
-            distance = float(kiosk\
-                .find('DistanceFromSearchLocation')\
-                .text)
+            distance = kiosk.get('DistanceFromSearchLocation')
             output = movie.to_dict()
             output['distance'] = distance
             output['reservation_link'] = "http://www.redbox.com/externalcart?titleID=%s&StoreGUID=%s" % (movie_id.lower(), store_id.lower())
