@@ -8,7 +8,7 @@ import math
 from google.appengine.ext import deferred
 from google.appengine.api import memcache
 from google.appengine.api import urlfetch
-from settings import REDBOX_APIKEY, RT_APIKEY
+from settings import REDBOX_URL, REDBOX_APIKEY
 from lxml import etree
 from google.appengine.ext import ndb
 from levenshtein import levenshtein
@@ -38,20 +38,23 @@ class Response():
 
 # Cache all API calls for an hour
 def fetch(url, **kwargs):
-    response = memcache.get(md5(url).hexdigest())
-    if response is None:
-        api_response = urlfetch.fetch(url, **kwargs)
-        response = Response(api_response.status_code, api_response.content)
-        memcache.set(md5(url).hexdigest(), response, time=3600)
+    #response = memcache.get(md5(url).hexdigest())
+    #if response is None:
+    api_response = urlfetch.fetch(url, **kwargs)
+    response = Response(api_response.status_code, api_response.content)
+        #memcache.set(md5(url).hexdigest(), response, time=3600)
     return response
 
 
 def download_movies():
-    url = "https://api.outerwall.com/ws/redbox/products/movies?apiKey=%s" % REDBOX_APIKEY
+    url = "%sproducts/movies?apiKey=%s" % (REDBOX_URL, REDBOX_APIKEY,)
     logging.info("Fetching products...")
     response = urlfetch.fetch(url,
-         headers={'Accept': 'application/json'},
-         deadline=600)
+        headers={
+            'Accept': 'application/json',
+            'X-Redbox-ApiKey': REDBOX_APIKEY
+        },
+        deadline=600)
     logging.info("complete!")
     movies = json.loads(response.content)
     if 'Products' not in movies or \
@@ -156,9 +159,12 @@ def fetch_inventory(zipcode):
     # Fetch inventory for all kiosks within 10 miles
     results = []
     logging.info("Fetching kiosks near %s" % zipcode)
-    url = "https://api.outerwall.com/ws/redbox/stores/postalcode/%s?apiKey=%s"\
-        % (zipcode, REDBOX_APIKEY)
-    response = fetch(url, headers={'Accept': 'application/json'})
+    url = "%sstores/postalcode/%s?apiKey=%s"\
+        % (REDBOX_URL, zipcode, REDBOX_APIKEY)
+    response = fetch(url, headers={
+        'Accept': 'application/json',
+        'X-Redbox-ApiKey': REDBOX_APIKEY
+    })
     if response.status_code != 200:
         raise ValueError("Could not retrieve kiosks near %s" % zipcode)
     kiosks_root = json.loads(response.content)
@@ -172,9 +178,12 @@ def fetch_inventory(zipcode):
         lat = kiosk['Location'].get('@lat')
         lon = kiosk['Location'].get('@long')
         logging.info("Looking up inventory for store %s,%s" % (lat,lon))
-        url = "https://api.outerwall.com/ws/redbox/inventory/stores/latlong/%s,%s?apiKey=%s"\
-            % (lat, lon, REDBOX_APIKEY)
-        response = fetch(url, headers={'Accept': 'application/json'})
+        url = "%sinventory/stores/latlong/%s,%s?apiKey=%s"\
+            % (REDBOX_URL, lat, lon, REDBOX_APIKEY)
+        response = fetch(url, headers={
+            'Accept': 'application/json',
+            'X-Redbox-ApiKey': REDBOX_APIKEY
+        })
         if response.status_code != 200:
             logging.error("Could not retrieve inventory for store: %s,%s" % (lat,lon))
             continue
